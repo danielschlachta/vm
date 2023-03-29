@@ -1,5 +1,16 @@
+# These have to be set to something
+
 CONFFILE=.vmrc
+
 FMT=qcow2
+
 SNAPSHOT_SEEDNAME_DEFAULT=seed
 SNAPSHOT_BASENAME_DEFAULT=base
 SNAPSHOT_BACKINGNAME_DEFAULT=backing
+
+# These don't
+
+#QEMU_VNC=:1
+#QEMU_DISPLAY=curses
+#QEMU_EXTRA=-no-shutdown
+

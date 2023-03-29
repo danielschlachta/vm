@@ -6,7 +6,7 @@ function vm_die()
         exit 1
 }
 
-GLOBCONF=$VM_LIB/config
+GLOBCONF=$VM_LIB/vmrc
 VERBOSE=0
 
 if [ ! -f $GLOBCONF ]; then vm_die configuration file \'$GLOBCONF\' not present; fi
