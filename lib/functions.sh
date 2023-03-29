@@ -22,7 +22,7 @@ if [ ! -f $CONFFILE ]; then vm_die configuration file \'$CONFFILE\' not present 
 . $CONFFILE
 
 if [ "$NET_LISTEN" = "" ]; then NET_LISTEN=0.0.0.0; fi
-if [ "$NET_HOST" = "" ]; then NET_HOST=$MACHINE_NAME; fi
+if [ "$NET_HOST" = "" ]; then NET_HOST=localhost; fi
 if [ "$NET_PORT" = "" ]; then NET_PORT=${MACHINE_ID}11; fi
 
 if [ "$USE_SNAPSHOTS" = "yes" -a "$SNAPSHOT_SEEDNAME" = "" ]; then SNAPSHOT_SEEDNAME=$SNAPSHOT_SEEDNAME_DEFAULT; fi
