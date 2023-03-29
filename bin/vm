@@ -1,0 +1,20 @@
+#!/bin/bash
+
+export VM_LIB=/usr/local/lib/vm
+
+. $VM_LIB/functions.sh
+
+if [ ! -f $CONFFILE ]; then vm_die configuration file \'$CONFFILE\' not present in current directory; fi
+
+. $CONFFILE
+
+CMD=$1
+shift
+
+KNOWN="cmd run init"
+
+case $CMD in
+    cmd|run|init) $VM_LIB/vm-$CMD $*
+	;;
+      *) vm_die unknown command \'$CMD\', must be one of $KNOWN;;
+esac

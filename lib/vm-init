@@ -1,0 +1,35 @@
+#!/bin/bash
+
+. $VM_LIB/functions.sh
+
+vm_check_var MACHINE_NAME
+
+VERBOSE=0
+
+for i in 1 2 3 4; do
+	if [ "$1" = "-ob" ]; then OB=1; shift; fi
+	if [ "$1" = "-ok" ]; then OK=1; shift; fi
+	if [ "$1" = "-v" ]; then VERBOSE=$(($VERBOSE + 1)); shift; fi
+done
+
+if [ "$USE_SNAPSHOTS" != "yes" ]; then vm_die snapshots not configured; fi
+if [ ! -f "$SEED_FILENAME" ]; then vm_die seed file \'$SEED_FILENAME\' not found; fi
+if [ -f "$BASE_FILENAME" -a "$OK" = "1"  ]; then CLOBBER_BACKING=yes; fi
+if [ -f "$BASE_FILENAME" -a ! -f "$BACKING_FILENAME"  ]; then CLOBBER_BACKING=yes; fi
+if [ -f "$BASE_FILENAME" -a "$OB" != "1" -a "$CLOBBER_BACKING" != "yes" ]; then vm_die base file \'$BASE_FILENAME\' exists, use -ob to overwrite, -ok to create new backing file only; fi
+if [ ! -f "$BASE_FILENAME" -a -f "$BACKING_FILENAME" -a "$OK" != "1" ]; then vm_die orphaned backing file \'$BACKING_FILENAME\' found, use -ok to overwrite; fi
+
+if [ "$CLOBBER_BACKING" = "yes" -a "$OB" != "1" ]
+then
+	if [ "$OK" != "1" ]; then vm_echo Base file \'$BASE_FILENAME\' already exists; fi
+else
+	vm_echo Creating base file \'$BASE_FILENAME\' 
+	CMD="pv $SEED_FILENAME > $BASE_FILENAME"
+	if [ $VERBOSE -gt 1 ]; then vm_echo $CMD; fi
+	echo $CMD | sh || exit 1
+fi
+
+vm_echo Creating backing file \'$BACKING_FILENAME\'
+CMD="qemu-img create -f $FMT -b $BASE_FILENAME -F $FMT $BACKING_FILENAME"
+if [ $VERBOSE -gt 1 ]; then vm_echo $CMD; fi
+echo $CMD | sh || exit 1
