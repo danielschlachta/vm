@@ -1,10 +1,4 @@
-PROG=`$BASENAME $0`
-
-function vm_die()
-{
-        echo -e $PROG: $* 1>&2
-        exit 1
-}
+PROG=`basename $0`
 
 VM_GLOBAL_CONFIG=$VM_LIB/vmrc
 VERBOSE=0
@@ -12,13 +6,14 @@ VERBOSE=0
 if [ ! -f $VM_GLOBAL_CONFIG ]; then vm_die configuration file \'$VM_GLOBAL_CONFIG\' not present; fi
 
 . $VM_GLOBAL_CONFIG
+. $VM_LIB/functions.sh
+
+VM_HOME_ORIGIN="$VM_HOME"
 
 if [ "$VM_HOME" = "" ]
 then
-    VM_HOME_ORIGIN='`pwd`'
     VM_HOME=`pwd`
 else
-    VM_HOME_ORIGIN='$VM_HOME'
     VM_HOME="`echo $VM_HOME | sed 's,/$,,'`"
 
     if [ -f $VM_CONFIG -a "$VM_HOME" != "`pwd`" -a "$VM_HOME_OVERRIDES_CWD" != "yes" ]; then \
@@ -53,8 +48,6 @@ then
     VM_SNAPSHOT_BASE_FILENAME=$VM_MACHINE_NAME-$VM_SNAPSHOT_BASENAME.$VM_FMT
     VM_SNAPSHOT_BACKING_FILENAME=$VM_MACHINE_NAME-$VM_SNAPSHOT_BACKINGNAME.$VM_FMT
 fi
-
-. $VM_LIB/functions.sh
 
 vm_check_var VM_CONFIG
 vm_check_var VM_FMT

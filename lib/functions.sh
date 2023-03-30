@@ -1,3 +1,9 @@
+function vm_die()
+{
+        echo -e $PROG: $* 1>&2
+        exit 1
+}
+
 VM_ERRCNT=0
 
 function vm_squeal()

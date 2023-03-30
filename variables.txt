@@ -24,6 +24,10 @@ The name of the per-directory config file.
 VM_GLOBAL_CONFIG
 The name of the file that has the overall defaults and such.
 
+VM_CALLING_DIR
+This is passed on to shells opened by vm and contains the original
+working directory vm was in when it was called.
+
 VM_FMT
 The format to use for image files, without the dot.
 

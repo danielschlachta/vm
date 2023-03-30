@@ -1,13 +1,11 @@
 #!/usr/local/bin/vm
 
-. $VM_LIB/init.sh
-
-vm_echo called with: $VM_PARAM
+vm_echo called with paramters: \'$VM_PARAMS\'
 
 echo
-echo 'Name: ' $MACHINE_NAME
-echo 'ID:   ' $MACHINE_ID
-echo 'Owner:' $MACHINE_OWNER
+echo 'Name: ' $VM_MACHINE_NAME
+echo 'ID:   ' $VM_MACHINE_ID
+echo 'Owner:' $VM_MACHINE_OWNER
 echo
 
 echo 'Current dir:    ' `pwd`

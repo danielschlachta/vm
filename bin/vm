@@ -8,8 +8,11 @@ VM_LIB=/home/daniel/Development/Projects/vm/lib
 ############## NO CONFIGURABLE PARTS BEYOND THIS POINT ###############
 
 BASENAME=`which basename 2> /dev/null`
+
 if [ -z $BASENAME ]; then
-    echo "vm: your PATH seems to be set to something not entirely wholesome: '$PATH'" 1>&2; exit 1; fi
+    echo "vm: your PATH seems to be set to something not entirely wholesome: '$PATH'" 1>&2
+    exit 1
+fi
 
 . $VM_LIB/init.sh
 
@@ -22,24 +25,35 @@ shift
 
 KNOWN="cmd run init sh"
 
+function export_vars()
+{
+    `grep ^VM_ $VM_LIB/../variables.txt | \
+        while read line; do echo export $line; done`
+}
+
 case $CMD in
     cmd|run|init) . $VM_LIB/vm-$CMD.sh $*
         ;;
     sh)
         shift
-
-        `grep ^VM_ $VM_LIB/../variables.txt | \
-            while read line; do echo export $line; done`
+        export_vars
 
         echo "Entering interactive mode; type 'exit' to quit."
         bash $*
         ;;
     *)
+        VM_HOME="$VM_HOME_ORIGIN"
+
+        export_vars
+
+        PROG=`basename $CMD`
+        export PROG
+
         cd "$VM_CALLING_DIR"
 
         if [ -f "$CMD" ];
         then
-            (echo VM_PARAM=\"$*\"; awk 'NR > 1 { print }' $CMD) | bash
+            (echo "VM_PARAMS=\"$*\"; . $VM_LIB/functions.sh"; awk 'NR > 1 { print }' $CMD) | (cd "$VM_HOME"; bash)
         else
             vm_die unknown command \'$CMD\', must be one of $KNOWN
         fi
