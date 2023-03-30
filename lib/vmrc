@@ -1,16 +1,20 @@
-# These have to be set to something
+# These have to be set to something somewhere, i.e. if they
+# are supposed to be used but not set, vm will die.
 
-CONFFILE=.vmrc
+VM_CONFIG=.vmrc
+VM_FMT=qcow2
 
-FMT=qcow2
+# That means you can kick this out if USE_SNAPSHSHOTS is never
+# set to 'yes'.
 
-SNAPSHOT_SEEDNAME_DEFAULT=seed
-SNAPSHOT_BASENAME_DEFAULT=base
-SNAPSHOT_BACKINGNAME_DEFAULT=backing
+VM_SNAPSHOT_SEEDNAME_DEFAULT=seed
+VM_SNAPSHOT_BASENAME_DEFAULT=base
+VM_SNAPSHOT_BACKINGNAME_DEFAULT=backing
 
-# These don't
+# You can override builtin defaults here, too.
 
-#QEMU_VNC=:1
-#QEMU_DISPLAY=curses
-#QEMU_EXTRA=-no-shutdown
+VM_DATEFMT="%F %T"
 
+# Or provide your own:
+
+#VM_QEMU_DISPLAY=curses

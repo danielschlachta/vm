@@ -1,0 +1,90 @@
+Notes:
+* This file is read by vm. Please do not clobber it.
+* If you do not want some any of these variables to be exported
+  by 'vm sh' you can comment them out.
+* Where not otherwise indicated, default values are found
+  in lib/vmrc.
+
+VM_LIB
+Where vm lives. You must edit <vm-installpath>/bin/vm to set this.
+
+VM_HOME
+If set, vm will cd to this directory (if possible, or die) and
+take everything from there. If a configuration file is found in the
+current directory but the value of VM_HOME would cause it to be ignored,
+an error message is issued instead (but see below).
+
+VM_HOME_OVERRIDES_CWD
+Always use the value stored in VM_HOME regardless of what is
+found in the current directory.
+
+VM_CONFIG
+The name of the per-directory config file.
+
+VM_GLOBAL_CONFIG
+The name of the file that has the overall defaults and such.
+
+VM_FMT
+The format to use for image files, without the dot.
+
+VM_DATEFMT
+The format used for log messages et al. as passed to the 'date' program.
+Leave blank to use the system default.
+
+VM_USE_SNAPSHOTS
+Set this to 'yes' or use the simple version.
+
+VM_MACHINE_NAME
+The name of the game. It is used to prefix basically everything.
+
+VM_MACHINE_ID
+Two decimal digits to uniquely identify the machine where free-format
+identifiers are not an option. Note that it is interpreted
+in different ways in different places. Thusly you can have 100
+IDs ranging from 00 to 99 but not anything else.
+
+VM_MACHINE_OWNER
+The name of a user account on the guest OS that you or whatever user the
+scripts that use vm are running as can ssh into without
+supplying a password. *Deep breath* Depending on the setup
+the ability to use sudo without a password is probably also
+difficult to avoid.
+
+VM_NET_LISTEN
+The address of the interface qemu monitor will bind to.
+Automatically defaults to 0.0.0.0 (any).
+
+VM_NET_PORT
+The port that will be used for qemu monitor.
+Automatically defaults to 77${MACHINE_ID}.
+
+VM_NET_HOST
+Can be set to the canonical name or ip address of the host that qemu
+is reachable under  (see above).
+Automatically defaults to 'localhost'.
+See also VM_NET_GUEST.
+
+VM_SNAPSHOT_SEEDNAME_DEFAULT
+VM_SNAPSHOT_BASENAME_DEFAULT
+VM_SNAPSHOT_BACKINGNAME_DEFAULT
+The last part of the name of the image file used for the purpose if
+there is not the override. Theses are global defaults to be used
+only in the system-wide vmrc. In your local configuration use:
+
+VM_SNAPSHOT_SEEDNAME
+VM_SNAPSHOT_BASENAME
+VM_SNAPSHOT_BACKINGNAME
+These values, if set, will be used to produce the actual file names
+like so:
+
+VM_SNAPSHOT_SEED_FILENAME
+VM_SNAPSHOT_BASE_FILENAME
+VM_SNAPSHOT_BACKING_FILENAME
+These contain the final version of the names of the files to be used
+and can not be overridden. Please note the absence of quotation marks
+below, you can't use spaces or other stuff that needs to be quoted
+as part of file names. Nor should you.
+- VM_SNAPSHOT_SEED_FILENAME=$VM_MACHINE_NAME-$VM_SNAPSHOT_SEEDNAME.$VM_FMT
+- VM_SNAPSHOT_BASE_FILENAME=$VM_MACHINE_NAME-$VM_SNAPSHOT_BASENAME.$VM_FMT
+- VM_SNAPSHOT_BACKING_FILENAME=$VM_MACHINE_NAME-$VM_SNAPSHOT_BACKINGNAME.$VM_FMT
+

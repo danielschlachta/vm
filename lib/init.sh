@@ -1,41 +1,64 @@
-PROG=`basename $0`
+PROG=`$BASENAME $0`
 
 function vm_die()
 {
-        echo $PROG: $* 1>&2
+        echo -e $PROG: $* 1>&2
         exit 1
 }
 
-GLOBCONF=$VM_LIB/vmrc
+VM_GLOBAL_CONFIG=$VM_LIB/vmrc
 VERBOSE=0
 
-if [ ! -f $GLOBCONF ]; then vm_die configuration file \'$GLOBCONF\' not present; fi
-. $GLOBCONF
+if [ ! -f $VM_GLOBAL_CONFIG ]; then vm_die configuration file \'$VM_GLOBAL_CONFIG\' not present; fi
 
-if [ "$VM_HOME" = "" ]; then VM_HOME=`pwd`; fi
+. $VM_GLOBAL_CONFIG
+
+if [ "$VM_HOME" = "" ]
+then
+    VM_HOME_ORIGIN='`pwd`'
+    VM_HOME=`pwd`
+else
+    VM_HOME_ORIGIN='$VM_HOME'
+    VM_HOME="`echo $VM_HOME | sed 's,/$,,'`"
+
+    if [ -f $VM_CONFIG -a "$VM_HOME" != "`pwd`" -a "$VM_HOME_OVERRIDES_CWD" != "yes" ]; then \
+        vm_die configuration file \($VM_CONFIG\) found \
+            in current directory but VM_HOME points someplace \
+            else \(to suppress this check, set VM_HOME_OVERRIDES_CWD \
+            to \'yes\'\); fi
+fi
 
 VM_CALLING_DIR=`pwd`
 
-RES=`cd "$VM_HOME" 2>&1 | sed 's,.* cd: ,,'; cd "$VM_HOME" 2> /dev/null` || vm_die could not cd to \$VM_HOME: $RES
+RES=`cd "$VM_HOME" 2>&1 | sed 's,.* cd: ,,'; cd "$VM_HOME" 2> /dev/null` || \
+    vm_die could not cd to \$VM_HOME: $RES
 
 cd "$VM_HOME"
 
-if [ ! -f $CONFFILE ]; then vm_die configuration file \'$CONFFILE\' not present in \'$VM_HOME\'; fi
-. $CONFFILE
+if [ ! -f $VM_CONFIG ]; then vm_die configuration file \'$VM_CONFIG\' not present in \'$VM_HOME\'; fi
 
-if [ "$NET_LISTEN" = "" ]; then NET_LISTEN=0.0.0.0; fi
-if [ "$NET_HOST" = "" ]; then NET_HOST=localhost; fi
-if [ "$NET_PORT" = "" ]; then NET_PORT=${MACHINE_ID}11; fi
+. $VM_CONFIG
 
-if [ "$USE_SNAPSHOTS" = "yes" -a "$SNAPSHOT_SEEDNAME" = "" ]; then SNAPSHOT_SEEDNAME=$SNAPSHOT_SEEDNAME_DEFAULT; fi
-if [ "$USE_SNAPSHOTS" = "yes" -a "$SNAPSHOT_BASENAME" = "" ]; then SNAPSHOT_BASENAME=$SNAPSHOT_BASENAME_DEFAULT; fi
-if [ "$USE_SNAPSHOTS" = "yes" -a "$SNAPSHOT_BACKINGNAME" = "" ]; then SNAPSHOT_BACKINGNAME=$SNAPSHOT_BACKINGNAME_DEFAULT; fi
+if [ "$VM_NET_LISTEN" = "" ]; then VM_NET_LISTEN=0.0.0.0; fi
+if [ "$VM_NET_HOST" = "" ]; then VM_NET_HOST=localhost; fi
+if [ "$VM_NET_PORT" = "" ]; then VM_NET_PORT=77${VM_MACHINE_ID}; fi
 
-if [ "$USE_SNAPSHOTS" = "yes" ]
+if [ "$VM_USE_SNAPSHOTS" = "yes" ]
 then
-    SEED_FILENAME=$MACHINE_NAME-$SNAPSHOT_SEEDNAME.$FMT
-    BASE_FILENAME=$MACHINE_NAME-$SNAPSHOT_BASENAME.$FMT
-    BACKING_FILENAME=$MACHINE_NAME-$SNAPSHOT_BACKINGNAME.$FMT
+    if [ "$VM_SNAPSHOT_SEEDNAME" = "" ]; then VM_SNAPSHOT_SEEDNAME=$VM_SNAPSHOT_SEEDNAME_DEFAULT; fi
+    if [ "$VM_SNAPSHOT_BASENAME" = "" ]; then VM_SNAPSHOT_BASENAME=$VM_SNAPSHOT_BASENAME_DEFAULT; fi
+    if [ "$VM_SNAPSHOT_BACKINGNAME" = "" ]; then VM_SNAPSHOT_BACKINGNAME=$VM_SNAPSHOT_BACKINGNAME_DEFAULT; fi
+
+    VM_SNAPSHOT_SEED_FILENAME=$VM_MACHINE_NAME-$VM_SNAPSHOT_SEEDNAME.$VM_FMT
+    VM_SNAPSHOT_BASE_FILENAME=$VM_MACHINE_NAME-$VM_SNAPSHOT_BASENAME.$VM_FMT
+    VM_SNAPSHOT_BACKING_FILENAME=$VM_MACHINE_NAME-$VM_SNAPSHOT_BACKINGNAME.$VM_FMT
 fi
 
 . $VM_LIB/functions.sh
+
+vm_check_var VM_CONFIG
+vm_check_var VM_FMT
+vm_check_var VM_MACHINE_NAME
+vm_check_var VM_MACHINE_ID
+
+. $VM_LIB/spinner.sh

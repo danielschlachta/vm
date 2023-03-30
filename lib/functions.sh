@@ -1,11 +1,29 @@
+VM_ERRCNT=0
+
+function vm_squeal()
+{
+    VM_ERRCNT=$(($VM_ERRCNT + 1))
+    echo "$*" 1>&2
+}
+
+function vm_die_if_error()
+{
+    if [ $VM_ERRCNT -gt 0 ]
+    then
+        if [ $VM_ERRCNT -gt 1 ]; then s=s; fi
+        echo exiting after $VM_ERRCNT error$s 1>&2
+        exit 1
+    fi
+}
+
 function vm_get_timestamp()
 {
-    echo [`date`]
+    if [ "$VM_DATEFMT" = "" ]; then date; else date +"$VM_DATEFMT"; fi
 }
 
 function vm_echo ()
 {
-    echo `vm_get_timestamp` $*
+    echo \[`vm_get_timestamp`\] $*
 }
 
 function vm_error()
@@ -22,28 +40,23 @@ function vm_check_root() {
 
 function vm_check_var()
 {
-    if [ "`echo . $CONFFILE\; echo \\$$1 | bash`" = "" ]
+    if [[ ! -v $1 ]]
     then
-        vm_die $CONFFILE: "mandatory variable $1 not set"
+        vm_die $VM_CONFIG: "mandatory variable $1 not set"
     fi
 }
 
-function vm_get_hd()
+function vm_check_prog()
 {
-    vm_check_var MACHINE_NAME
-
-    echo $1
-
-    if [ "$USE_SNAPSHOTS" = "yes" ]
+    PRG=`which $1`
+    if [ -z "$PRG" -o ! -z $VM_LIST_PKG ]
     then
-        if [ -f $BACKINGFILENAME ]
+        if [ -z "$PRG" ]
         then
-            echo $BACKINGFILENAME
+            PKG=not-yet-known
+            vm_squeal "$1 not found, install it using 'sudo apt install $PKG'"
         else
-            if [ $# ]; then vm_add_msg no backing file found, using base;  fi
-            echo $BASEFILENAME
+            test -d /var/lib/apt && echo $1 `dpkg -S $PRG | cut -f1 -d:`
         fi
-    else
-        echo $MACHINE_NAME.$FMT
     fi
 }

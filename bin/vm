@@ -1,12 +1,21 @@
 #!/bin/bash
 
-export VM_LIB=/usr/local/lib/vm
+############## Set this to where you have installed vm ###############
+
+#VM_LIB=/usr/local/vm/lib
+VM_LIB=/home/daniel/Development/Projects/vm/lib
+
+############## NO CONFIGURABLE PARTS BEYOND THIS POINT ###############
+
+BASENAME=`which basename 2> /dev/null`
+if [ -z $BASENAME ]; then
+    echo "vm: your PATH seems to be set to something not entirely wholesome: '$PATH'" 1>&2; exit 1; fi
 
 . $VM_LIB/init.sh
 
-if [ ! -f $CONFFILE ]; then vm_die configuration file \'$CONFFILE\' not present in current directory; fi
+if [ ! -f $VM_CONFIG ]; then vm_die configuration file \'$VM_CONFIG\' not present in current directory; fi
 
-. $CONFFILE
+. $VM_CONFIG
 
 CMD=$1
 shift
@@ -14,11 +23,16 @@ shift
 KNOWN="cmd run init sh"
 
 case $CMD in
-    cmd|run|init) $VM_LIB/vm-$CMD $*
+    cmd|run|init) . $VM_LIB/vm-$CMD.sh $*
         ;;
     sh)
         shift
-        $SHELL $*
+
+        `grep ^VM_ $VM_LIB/../variables.txt | \
+            while read line; do echo export $line; done`
+
+        echo "Entering interactive mode; type 'exit' to quit."
+        bash $*
         ;;
     *)
         cd "$VM_CALLING_DIR"

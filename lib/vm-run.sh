@@ -2,13 +2,14 @@
 
 . $VM_LIB/init.sh
 
-vm_check_var MACHINE_ID
-vm_check_var MACHINE_NAME
-vm_check_var MEM_SIZE
+vm_check_var VM_MACHINE_NAME
+vm_check_var VM_MACHINE_ID
+vm_check_var VM_MEM_SIZE
 
 VERBOSE=0
 
-if [ "`echo $QEMU_EXTRA$* | grep daemonize`" != "" ]; then vm_die -daemonize option is incompatible with vm run, use vm start instead; fi
+if [ "`echo $VM_QEMU_EXTRA$* | grep daemonize`" != "" ]; then \
+    vm_die -daemonize option is incompatible with vm run, use vm start instead; fi
 
 for i in 1 2 3 4; do
     if [ "$1" = "-v" ]; then VERBOSE=$(($VERBOSE + 1)); shift; fi
@@ -16,18 +17,22 @@ for i in 1 2 3 4; do
     if [ "$1" = "-b" ]; then BASE=1; shift; fi
 done
 
-if [ "$USE_SNAPSHOTS" = "yes" -a ! -f "$BACKING_FILENAME" -a "$BASE" != "1" ]; then vm_die snapshots configured, but backing file \'$BACKING_FILENAME\' not found, use -b to use the base file instead; fi
-if [ "$USE_SNAPSHOTS" = "yes" -a "$BASE" = "1" -a ! -f "$BASE_FILENAME"  ]; then vm_die base file \'$BASE_FILENAME\' not found; fi
+if [ "$VM_USE_SNAPSHOTS" = "yes" -a ! -f "$VM_BACKING_FILENAME" -a "$BASE" != "1" ]; then \
+    vm_die snapshots configured, but backing file \'$BACKING_FILENAME\' not found, use -b to \
+    use the base file instead; fi
 
-if [ "$USE_SNAPSHOTS" = "yes" ]
+if [ "$VM_USE_SNAPSHOTS" = "yes" -a "$BASE" = "1" -a ! -f "$BASE_FILENAME"  ]; then vm_die base \
+    file \'$BASE_FILENAME\' not found; fi
+
+if [ "$VM_USE_SNAPSHOTS" = "yes" ]
 then
-    if [ "$BASE" = "1" ]; then HDA=$BASE_FILENAME; else HDA=$BACKING_FILENAME; fi
+    if [ "$BASE" = "1" ]; then HDA=$VM_BASE_FILENAME; else HDA=$VM_BACKING_FILENAME; fi
 else
-    HDA=$MACHINE_NAME.$FMT
+    HDA=$VM_MACHINE_NAME.$VM_FMT
 fi
 
-if [ "$QEMU_DISPLAY" != "" ]; then DISP="-display $QEMU_DISPLAY"; fi
-if [ "$QEMU_VNC" != "" ]; then VNC="-vnc $QEMU_VNC"; fi
+if [ "$VM_QEMU_DISPLAY" != "" ]; then DISP="-display $VM_QEMU_DISPLAY"; fi
+if [ "$VM_QEMU_VNC" != "" ]; then VNC="-vnc $VM_QEMU_VNC"; fi
 
 function getid()
 {
@@ -57,7 +62,7 @@ then
     NET_IF=""
 else
     vm_check_root
-    NET_IF="-device e1000,netdev=net0,mac=DE:AD:BE:EF:${MACHINE_ID}:11 -netdev tap,id=net0"
+    NET_IF="-device e1000,netdev=net0,mac=DE:AD:BE:EF:${VM_MACHINE_ID}:11 -netdev tap,id=net0"
 fi
 
 
@@ -71,9 +76,9 @@ then
 fi
 
 
-CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $MEM_SIZE \
-    -monitor telnet:$NET_LISTEN:$NET_PORT,server,nowait \
-    $NET_IF -hda $HDA -no-shutdown $DISP $VNC $QEMU_EXTRA $*"
+CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $VM_MEM_SIZE \
+    -monitor telnet:$VM_NET_LISTEN:$VM_NET_PORT,server,nowait \
+    $NET_IF -hda $HDA -no-shutdown $DISP $VM_VNC $VM_QEMU_EXTRA $*"
 
 if [ $VERBOSE -gt 1 ]; then vm_echo $CMD; fi
 echo $CMD | sh

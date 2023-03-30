@@ -2,13 +2,16 @@
 
 . $VM_LIB/init.sh
 
+vm_check_var VM_NET_HOST
+vm_check_var VM_NET_PORT
+
 if [ $# -lt 1 ]; then vm_die too few arguments; fi
 
 function do_expect()
 {
 expect <<-END
     set timeout 2
-    spawn nc $NET_HOST $NET_PORT
+    spawn nc $VM_NET_HOST $VM_NET_PORT
     expect {
         eof {}
         "qemu) " {
@@ -32,14 +35,14 @@ function send_cmd()
 
 if [ "$*" = "q" -o "$*" = "quit" ]
 then
-    vm cmd info status > /dev/null && echo q | nc $NET_HOST $NET_PORT 2>&1 > /dev/null
+    vm cmd info status > /dev/null && echo q | nc $VM_NET_HOST $VM_NET_PORT 2>&1 > /dev/null
 else
     send_cmd $* | (
     read dummy
 
     if [ "$dummy" = "" ]
     then
-        vm_die could not connect to host $NET_HOST port $NET_PORT
+        vm_die could not connect to host $VM_NET_HOST port $VM_NET_PORT
     fi
 
     while read RESP; do echo $RESP; done

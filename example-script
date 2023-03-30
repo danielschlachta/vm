@@ -1,0 +1,18 @@
+#!/usr/local/bin/vm
+
+. $VM_LIB/init.sh
+
+vm_echo called with: $VM_PARAM
+
+echo
+echo 'Name: ' $MACHINE_NAME
+echo 'ID:   ' $MACHINE_ID
+echo 'Owner:' $MACHINE_OWNER
+echo
+
+echo 'Current dir:    ' `pwd`
+echo 'VM_HOME:        ' $VM_HOME
+echo 'VM_CALLING_DIR: ' $VM_CALLING_DIR
+echo
+
+vm_die This script needs work.
