@@ -2,7 +2,7 @@
 
 export VM_LIB=/usr/local/lib/vm
 
-. $VM_LIB/functions.sh
+. $VM_LIB/init.sh
 
 if [ ! -f $CONFFILE ]; then vm_die configuration file \'$CONFFILE\' not present in current directory; fi
 
@@ -11,10 +11,23 @@ if [ ! -f $CONFFILE ]; then vm_die configuration file \'$CONFFILE\' not present 
 CMD=$1
 shift
 
-KNOWN="cmd run init"
+KNOWN="cmd run init sh"
 
 case $CMD in
     cmd|run|init) $VM_LIB/vm-$CMD $*
-	;;
-      *) vm_die unknown command \'$CMD\', must be one of $KNOWN;;
+        ;;
+    sh)
+        shift
+        $SHELL $*
+        ;;
+    *)
+        cd "$VM_CALLING_DIR"
+
+        if [ -f "$CMD" ];
+        then
+            (echo VM_PARAM=\"$*\"; awk 'NR > 1 { print }' $CMD) | bash
+        else
+            vm_die unknown command \'$CMD\', must be one of $KNOWN
+        fi
+    ;;
 esac

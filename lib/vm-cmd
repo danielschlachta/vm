@@ -1,47 +1,47 @@
 #!/bin/bash
 
-. $VM_LIB/functions.sh
+. $VM_LIB/init.sh
 
 if [ $# -lt 1 ]; then vm_die too few arguments; fi
 
-function do_expect() 
+function do_expect()
 {
 expect <<-END
-	set timeout 2
-	spawn nc $NET_HOST $NET_PORT 
-	expect {
-		eof {}
-		"qemu) " {
-			send "$*\n"
-			expect "qemu)" { send_user "$expect_out" }
-		}
-	}
+    set timeout 2
+    spawn nc $NET_HOST $NET_PORT
+    expect {
+        eof {}
+        "qemu) " {
+            send "$*\n"
+            expect "qemu)" { send_user "$expect_out" }
+        }
+    }
 END
 }
 
-function filter() 
+function filter()
 {
-	sed 's,\r\n,\n,g' | tail -n +4 | head -n -1
+    sed 's,\r\n,\n,g' | tail -n +4 | head -n -1
 }
 
-function send_cmd() 
+function send_cmd()
 {
-	do_expect $* | filter else
+    do_expect $* | filter else
 }
 
 
-if [ "$*" = "q" -o "$*" = "quit" ] 
-then 
-	vm cmd info status > /dev/null && echo q | nc $NET_HOST $NET_PORT 2>&1 > /dev/null
+if [ "$*" = "q" -o "$*" = "quit" ]
+then
+    vm cmd info status > /dev/null && echo q | nc $NET_HOST $NET_PORT 2>&1 > /dev/null
 else
-	send_cmd $* | (
-	read dummy
+    send_cmd $* | (
+    read dummy
 
-	if [ "$dummy" = "" ]
-	then 
-		vm_die could not connect to host $NET_HOST port $NET_PORT
-	fi
+    if [ "$dummy" = "" ]
+    then
+        vm_die could not connect to host $NET_HOST port $NET_PORT
+    fi
 
-	while read RESP; do echo $RESP; done
-	)
+    while read RESP; do echo $RESP; done
+    )
 fi
