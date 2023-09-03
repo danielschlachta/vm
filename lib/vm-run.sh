@@ -1,5 +1,7 @@
 vm_check_var VM_MEM_SIZE
 
+if [ "$VM_QEMU_DISPLAY" = "curses" ]; then vm_check_prog tput; fi
+
 if [ "`echo $VM_QEMU_EXTRA$* | grep daemonize`" != "" ]; then \
     vm_die -daemonize option is incompatible with vm run, please use vm start instead; fi
 
@@ -76,3 +78,10 @@ then
     nmcli connection del `getid bridge-slave-enp2s0` | flt
     nmcli connection del `getid bridge-bridge0` | flt
 fi
+
+test "$DISP" = "curses" || exit 0
+
+reset
+tput rc
+tput cnorm
+

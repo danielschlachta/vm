@@ -3,20 +3,14 @@
 vm_progress Retrieving virtual machine status
 H_STAT=`vm_get_status`
 
-if [ -z "$H_STAT" ]; then
-    vm_error Error contacting monitor on $VM_NET_HOST port $VM_NET_PORT
-    exit 1
-fi
+if [ -z "$H_STAT" ]; then vm_die Error contacting monitor on $VM_NET_HOST port $VM_NET_PORT; fi
 
 vm_echo_if_verbose Machine is $H_STAT
 
 vm_progress Checking if ssh is available
 H_SSH=`vm_check_ssh`
 
-if [ "$H_SSH" != "ok" ]; then
-    vm_error Error contacting ssh service: $H_SSH
-    exit 1
-fi
+if [ "$H_SSH" != "ok" ]; then vm_die Error contacting ssh service: $H_SSH; fi
 
 if [ "$POWEROFF" = "1" ]; then
     vm_echo_if_verbose Sending poweroff command

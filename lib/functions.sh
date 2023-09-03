@@ -63,11 +63,6 @@ function vm_echo_if_verbose()
     if [ "$VERBOSE" = "1" ]; then vm_echo $*; fi
 }
 
-function vm_error()
-{
-    vm_echo $* 1>&2
-}
-
 function vm_check_root() {
     if [ "$USER" != "root" ]
     then

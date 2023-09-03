@@ -31,7 +31,7 @@ else
     vm_echo Checking if base file \'$VM_SNAPSHOT_BASE_FILENAME\' is writable
     CMD="touch $VM_SNAPSHOT_BASE_FILENAME"
     if [ "$VERBOSE" = "1" ]; then vm_echo Running \'$CMD\'; fi
-    if [ -z $DRYRUN ]; then ERR="`$CMD 2>&1`" || (vm_error "$ERR"; exit 1) || exit 1; else vm_echo Testing only, not running command; fi
+    if [ -z $DRYRUN ]; then ERR="`$CMD 2>&1`" || vm_die "$ERR"; else vm_echo Testing only, not running command; fi
 
     vm_echo Creating base file \'$VM_SNAPSHOT_BASE_FILENAME\'
     CMD="pv $VM_SNAPSHOT_SEED_FILENAME > $VM_SNAPSHOT_BASE_FILENAME"
@@ -48,4 +48,4 @@ fi
 vm_echo Creating backing file \'$VM_SNAPSHOT_BACKING_FILENAME\'
 CMD="qemu-img create -f $VM_FMT -b $VM_SNAPSHOT_BASE_FILENAME -F $VM_FMT $VM_SNAPSHOT_BACKING_FILENAME"
 if [ "$VERBOSE" = "1" ]; then vm_echo Running \'$CMD\'; fi
-if [ -z $DRYRUN ]; then ERR="`echo $CMD '|| exit 1' | sh 2>&1`" || (vm_error "$ERR"; exit 1); else vm_echo Testing only, not running command; fi
+if [ -z $DRYRUN ]; then ERR="`echo $CMD '|| exit 1' | sh 2>&1`" || vm_die "$ERR"; else vm_echo Testing only, not running command; fi

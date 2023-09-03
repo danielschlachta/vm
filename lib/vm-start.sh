@@ -35,19 +35,21 @@ if [ "`echo $STAT|grep susp`" != "" ]; then
     vm cmd system_wakeup
 fi
 
-ATT=30
+if [ "$NAT" = "0" ]; then
+    ATT=30
 
-while [ $ATT -gt 0 ]; do
-    vm_progress Waiting for ssh service to become available \($ATT attempts remaining\)
-    ATT=$(($ATT - 1))
+    while [ $ATT -gt 0 ]; do
+        vm_progress Waiting for ssh service to become available \($ATT attempts remaining\)
+        ATT=$(($ATT - 1))
 
-    STAT=`vm_check_ssh`
+        STAT=`vm_check_ssh`
 
-    if [ "$STAT" = "ok" ]; then break; fi
+        if [ "$STAT" = "ok" ]; then break; fi
 
-    sleep 2
-done
+        sleep 2
+    done
 
-if [ "$ATT" = "0" ]; then vm_die Unable to connect to virtual machine via ssh; fi
+    if [ "$ATT" = "0" ]; then vm_die Unable to connect to virtual machine via ssh; fi
 
-vm_echo_if_verbose Virtual machine is ready
+    vm_echo_if_verbose Virtual machine is ready
+fi

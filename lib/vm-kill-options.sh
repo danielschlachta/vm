@@ -1,12 +1,9 @@
-VM_LONGOPTS=savevm:,poweroff
-VM_OPTIONS=s:p
+VM_LONGOPTS=
+VM_OPTIONS=
 
 function vm_help()
 {
-       cat <<EOT
-  -s | --savevm           save named snapshot
-  -p | --poweroff         power the machine down instead of suspending it
-EOT
+    return
 }
 
 . $VM_LIB/options.sh

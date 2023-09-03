@@ -1,10 +1,10 @@
-VM_LONGOPTS=use-nat,base-only,loadvm:
+VM_LONGOPTS=nat,base-only,loadvm:
 VM_OPTIONS=nbl:
 
 function vm_help()
 {
     cat <<EOT
-  -n | --use-nat          do not attempt to create a bridge interface
+  -n | --nat              do not attempt to create a bridge interface, use builtin nat instead
   -b | --base-only        when snapshots are enabled, do not use any backing file
   -l | --loadvm           load named snapshot
 EOT
@@ -22,7 +22,7 @@ while true; do
             shift
             break
             ;;
-        -n|--use-nat)
+        -n|--nat)
             NAT=1
             shift
             ;;

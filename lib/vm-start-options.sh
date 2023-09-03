@@ -12,6 +12,7 @@ EOT
 . $VM_LIB/options.sh
 
 NAT=0
+NOSSH=0
 
 while true; do
     case "$1" in
@@ -23,7 +24,7 @@ while true; do
             NAT=1
             shift
             ;;
-        -l|--loadvm)
+       -l|--loadvm)
             LOADVM="$2"
             shift 2
             ;;

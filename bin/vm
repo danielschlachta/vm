@@ -23,7 +23,7 @@ if [ ! -f $VM_CONFIG ]; then vm_die configuration file \'$VM_CONFIG\' not presen
 CMD=$1
 shift
 
-KNOWN="start stop status cmd run init sh"
+KNOWN="start stop kill status cmd run init sh"
 
 if [ -z $CMD ]; then
         for i in $KNOWN; do US="$US | $i"; done
@@ -38,7 +38,7 @@ function export_vars()
 }
 
 case $CMD in
-    start|stop|status|cmd|run|init)
+    start|stop|kill|status|cmd|run|init)
                 . $VM_LIB/vm-$CMD-options.sh
                 . $VM_LIB/vm-$CMD.sh $*
         ;;
