@@ -1,7 +1,6 @@
-PROG=`basename $0`
+export PROG=`basename $0`
 
 VM_GLOBAL_CONFIG=$VM_LIB/vmrc
-VERBOSE=0
 
 if [ ! -f $VM_GLOBAL_CONFIG ]; then vm_die configuration file \'$VM_GLOBAL_CONFIG\' not present; fi
 
@@ -37,6 +36,7 @@ if [ ! -f $VM_CONFIG ]; then vm_die configuration file \'$VM_CONFIG\' not presen
 if [ "$VM_NET_LISTEN" = "" ]; then VM_NET_LISTEN=0.0.0.0; fi
 if [ "$VM_NET_HOST" = "" ]; then VM_NET_HOST=localhost; fi
 if [ "$VM_NET_PORT" = "" ]; then VM_NET_PORT=77${VM_MACHINE_ID}; fi
+if [ "$VM_NET_GUEST" = "" ]; then VM_NET_GUEST=$VM_MACHINE_NAME; fi
 
 if [ "$VM_USE_SNAPSHOTS" = "yes" ]
 then
@@ -53,5 +53,15 @@ vm_check_var VM_CONFIG
 vm_check_var VM_FMT
 vm_check_var VM_MACHINE_NAME
 vm_check_var VM_MACHINE_ID
+vm_check_var VM_MACHINE_OWNER
+
+vm_check_prog head
+vm_check_prog tail
+vm_check_prog cut
+vm_check_prog awk
+vm_check_prog sed
+
+vm_die_if_error
 
 . $VM_LIB/spinner.sh
+

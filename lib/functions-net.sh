@@ -27,11 +27,15 @@ function vm_get_status()
     vm cmd info status 2> /dev/null | sed -e 's,VM status: ,,' -e 's,..$,,'
 }
 
-SSH="ssh -o ServerAliveInterval=2 -o StrictHostKeyChecking=no -o PasswordAuthentication=no $VM_MACHINE_OWNER@$VM_NET_GUEST"
+USR=$USER
+
+if [ "$USER" = "root" ]; then USR=$SUDO_USER; fi
+
+SSH="ssh -o User=$USR -o IdentityFile=/home/$USR/.ssh/id_rsa -o ServerAliveInterval=2 -o StrictHostKeyChecking=no -o PasswordAuthentication=no $VM_MACHINE_OWNER@$VM_NET_GUEST"
 
 function vm_check_ssh()
 {
-    $SSH  echo ok 2>&1 | sed 's,ssh: ,,'
+    $SSH echo ok 2>&1 | sed 's,ssh: ,,'
 }
 
 function vm_get_suspend_method()
@@ -54,4 +58,9 @@ function vm_suspend()
     SPM=`vm_get_suspend_method`
 
     if [ "$SPM" != "" ]; then $SSH sudo -n $SPM > /dev/null 2> /dev/null; fi
+}
+
+function vm_poweroff()
+{
+    $SSH sudo -n poweroff > /dev/null 2> /dev/null
 }

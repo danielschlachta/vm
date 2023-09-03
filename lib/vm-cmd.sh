@@ -1,9 +1,11 @@
-#!/bin/bash
-
 . $VM_LIB/init.sh
 
 vm_check_var VM_NET_HOST
 vm_check_var VM_NET_PORT
+
+vm_check_prog expect
+vm_check_prog nc
+vm_die_if_error
 
 if [ $# -lt 1 ]; then vm_die too few arguments; fi
 
@@ -29,22 +31,11 @@ function filter()
 
 function send_cmd()
 {
-    do_expect $* | filter else
+    do_expect $* | filter
 }
 
 
-if [ "$*" = "q" -o "$*" = "quit" ]
-then
-    vm cmd info status > /dev/null && echo q | nc $VM_NET_HOST $VM_NET_PORT 2>&1 > /dev/null
-else
-    send_cmd $* | (
-    read dummy
-
-    if [ "$dummy" = "" ]
-    then
-        vm_die could not connect to host $VM_NET_HOST port $VM_NET_PORT
-    fi
-
-    while read RESP; do echo $RESP; done
-    )
-fi
+send_cmd $* | (
+read dummy
+while read RESP; do echo $RESP; done
+)

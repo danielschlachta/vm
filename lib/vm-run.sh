@@ -1,32 +1,18 @@
-#!/bin/bash
-
-. $VM_LIB/init.sh
-
-vm_check_var VM_MACHINE_NAME
-vm_check_var VM_MACHINE_ID
 vm_check_var VM_MEM_SIZE
 
-VERBOSE=0
-
 if [ "`echo $VM_QEMU_EXTRA$* | grep daemonize`" != "" ]; then \
-    vm_die -daemonize option is incompatible with vm run, use vm start instead; fi
+    vm_die -daemonize option is incompatible with vm run, please use vm start instead; fi
 
-for i in 1 2 3 4; do
-    if [ "$1" = "-v" ]; then VERBOSE=$(($VERBOSE + 1)); shift; fi
-    if [ "$1" = "-nat" ]; then NAT=1; shift; fi
-    if [ "$1" = "-b" ]; then BASE=1; shift; fi
-done
-
-if [ "$VM_USE_SNAPSHOTS" = "yes" -a ! -f "$VM_BACKING_FILENAME" -a "$BASE" != "1" ]; then \
-    vm_die snapshots configured, but backing file \'$BACKING_FILENAME\' not found, use -b to \
+if [ "$VM_USE_SNAPSHOTS" = "yes" -a ! -f "$VM_SNAPSHOT_BACKING_FILENAME" -a "$BASE" != "1" ]; then \
+    vm_die snapshots configured, but backing file \'$VM_SNAPSHOT_BACKING_FILENAME\' not found, use -b to \
     use the base file instead; fi
 
-if [ "$VM_USE_SNAPSHOTS" = "yes" -a "$BASE" = "1" -a ! -f "$BASE_FILENAME"  ]; then vm_die base \
-    file \'$BASE_FILENAME\' not found; fi
+if [ "$VM_USE_SNAPSHOTS" = "yes" -a "$BASE" = "1" -a ! -f "$VM_SNAPSHOT_BASE_FILENAME"  ]; then vm_die base \
+    file \'$VM_SNAPSHOT_BASE_FILENAME\' not found; fi
 
 if [ "$VM_USE_SNAPSHOTS" = "yes" ]
 then
-    if [ "$BASE" = "1" ]; then HDA=$VM_BASE_FILENAME; else HDA=$VM_BACKING_FILENAME; fi
+    if [ "$BASE" = "1" ]; then HDA=$VM_SNAPSHOT_BASE_FILENAME; else HDA=$VM_SNAPSHOT_BACKING_FILENAME; fi
 else
     HDA=$VM_MACHINE_NAME.$VM_FMT
 fi
@@ -40,7 +26,7 @@ function getid()
 }
 
 function flt() {
-    if [ $VERBOSE -gt 0 ]
+    if [ "$VERBOSE" = "1" ]
     then
         while read line; do vm_echo $line; done
     else
@@ -73,14 +59,16 @@ then
 
     nmcli connection up `getid bridge-bridge0` | flt
     nmcli connection up `getid bridge-slave` | flt
+
+    sleep 1
 fi
 
 
 CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $VM_MEM_SIZE \
     -monitor telnet:$VM_NET_LISTEN:$VM_NET_PORT,server,nowait \
-    $NET_IF -hda $HDA -no-shutdown $DISP $VM_VNC $VM_QEMU_EXTRA $*"
+    $NET_IF -hda $HDA -no-shutdown $LOADVM $DISP $VM_VNC $VM_QEMU_EXTRA $*"
 
-if [ $VERBOSE -gt 1 ]; then vm_echo $CMD; fi
+if [ "$VERBOSE" = "1" ]; then vm_echo $CMD; fi
 echo $CMD | sh
 
 if [ "$HAVE_BRIDGE" = "" -a "$HAVE_NETMAN" = "yes" ]

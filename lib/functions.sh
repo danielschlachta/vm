@@ -1,9 +1,3 @@
-function vm_die()
-{
-        echo -e $PROG: $* 1>&2
-        exit 1
-}
-
 VM_ERRCNT=0
 
 function vm_squeal()
@@ -27,9 +21,46 @@ function vm_get_timestamp()
     if [ "$VM_DATEFMT" = "" ]; then date; else date +"$VM_DATEFMT"; fi
 }
 
+function vm_progress_stop()
+{
+    if [ "$SPINNER_RUNNING" = "1" -a "$SPINNER_DONEFILE" != "" ]; then
+        touch $SPINNER_DONEFILE
+        SPINNER_RUNNING=0
+        sleep 0.3
+    fi
+}
+
+function vm_progress()
+{
+    if [ "$VERBOSE" = "1" -a -t 1 ]; then
+        if [ "$SPINNER_RUNNING" -lt "1" ]; then
+            export SPINNER_DONEFILE=`mktemp -u /tmp/vm.XXXXXXXXX`
+            spinner &
+            SPINNER_RUNNING=1
+        fi
+
+        tput el
+        echo -en "  " $* "\r"
+    fi
+}
+
+function vm_die()
+{
+    vm_progress_stop
+    echo -e $PROG: $* 1>&2
+    exit 1
+}
+
 function vm_echo ()
 {
+    vm_progress_stop
     echo \[`vm_get_timestamp`\] $*
+}
+
+function vm_echo_if_verbose()
+{
+    vm_progress_stop
+    if [ "$VERBOSE" = "1" ]; then vm_echo $*; fi
 }
 
 function vm_error()

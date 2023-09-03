@@ -23,7 +23,13 @@ if [ ! -f $VM_CONFIG ]; then vm_die configuration file \'$VM_CONFIG\' not presen
 CMD=$1
 shift
 
-KNOWN="cmd run init sh"
+KNOWN="start stop status cmd run init sh"
+
+if [ -z $CMD ]; then
+        for i in $KNOWN; do US="$US | $i"; done
+        vm_die usage: vm \{${US## |} \}
+fi
+
 
 function export_vars()
 {
@@ -32,30 +38,32 @@ function export_vars()
 }
 
 case $CMD in
-    cmd|run|init) . $VM_LIB/vm-$CMD.sh $*
+    start|stop|status|cmd|run|init)
+                . $VM_LIB/vm-$CMD-options.sh
+                . $VM_LIB/vm-$CMD.sh $*
         ;;
     sh)
         shift
         export_vars
 
+        if [ "$SHELL" = "" ]; then export SHELL=bash; fi
+
         echo "Entering interactive mode; type 'exit' to quit."
-        bash $*
+        $SHELL $*
         ;;
     *)
         VM_HOME="$VM_HOME_ORIGIN"
 
         export_vars
 
-        PROG=`basename $CMD`
-        export PROG
-
         cd "$VM_CALLING_DIR"
 
         if [ -f "$CMD" ];
         then
-            (echo "VM_PARAMS=\"$*\"; . $VM_LIB/functions.sh"; awk 'NR > 1 { print }' $CMD) | (cd "$VM_HOME"; bash)
+            (echo "VM_PARAMS=\"$*\"; . $VM_LIB/functions.sh"; awk 'NR > 1 { print }' $CMD) | \
+                (cd "$VM_HOME"; bash)
         else
-            vm_die unknown command \'$CMD\', must be one of $KNOWN
+                vm_die unknown command \'$CMD\', must be one of $KNOWN
         fi
     ;;
 esac

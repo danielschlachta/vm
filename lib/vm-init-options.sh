@@ -1,5 +1,14 @@
-LONGOPTS=help,show-commands,dry-run,clobber-backing,clobber-base
-OPTIONS=hctbk
+VM_LONGOPTS=dry-run,clobber-backing,clobber-base
+VM_OPTIONS=tbk
+
+function vm_help()
+{
+    cat <<EOT
+  -t | --dry-run          do not execute commands, just play what-if
+  -k | --clobber-backing  overwrite existing backing file
+  -b | --clobber-base     overwrite existing base file
+EOT
+}
 
 . $VM_LIB/options.sh
 
@@ -8,21 +17,6 @@ while true; do
         --)
             shift
             break
-            ;;
-        -h|--help)
-                cat 1>&2 <<EOT
-  -c | --show-commands    show commands being executed
-  -t | --dry-run          do not execute commands, just play what-if
-  -k | --clobber-backing  overwrite existing backing file
-  -b | --clobber-base     overwrite existing base file
-EOT
-                exit 0
-                ;;
-
-        -c|--show-commands)
-            VERBOSE=1
-            SHOWCOM=1
-            shift
             ;;
         -t|--dry-run)
             DRYRUN=1
@@ -37,7 +31,7 @@ EOT
             shift
             ;;
         *)
-            vm_die internal error parsing command line
+            shift
             ;;
     esac
 done

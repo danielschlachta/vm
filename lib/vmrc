@@ -4,7 +4,7 @@
 VM_CONFIG=.vmrc
 VM_FMT=qcow2
 
-# That means you can kick this out if USE_SNAPSHSHOTS is never
+# That means you can kick these out if USE_SNAPSHSHOTS is never
 # set to 'yes'.
 
 VM_SNAPSHOT_SEEDNAME_DEFAULT=seed

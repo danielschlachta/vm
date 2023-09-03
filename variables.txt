@@ -1,8 +1,8 @@
 Notes:
 * This file is read by vm. Please do not clobber it.
-* If you do not want some any of these variables to be exported
+* If you do not want any of these variables to be exported
   by 'vm sh' you can comment them out.
-* Where not otherwise indicated, default values are found
+* Unless indicated otherwise, default values are found
   in lib/vmrc.
 
 VM_LIB
@@ -50,29 +50,32 @@ IDs ranging from 00 to 99 but not anything else.
 VM_MACHINE_OWNER
 The name of a user account on the guest OS that you or whatever user the
 scripts that use vm are running as can ssh into without
-supplying a password. *Deep breath* Depending on the setup
-the ability to use sudo without a password is probably also
-difficult to avoid.
+supplying a password. Note that this account also has to be setup so that
+the various suspend/poweroff commands can be executed via sudo without
+supplying a password.
 
 VM_NET_LISTEN
 The address of the interface qemu monitor will bind to.
-Automatically defaults to 0.0.0.0 (any).
+Defaults to 0.0.0.0 (any).
 
 VM_NET_PORT
-The port that will be used for qemu monitor.
-Automatically defaults to 77${MACHINE_ID}.
+The port that will be used for the qemu monitor.
+Defaults to 77${MACHINE_ID}.
 
 VM_NET_HOST
 Can be set to the canonical name or ip address of the host that qemu
-is reachable under  (see above).
-Automatically defaults to 'localhost'.
+is reachable under (see above).
+Defaults to 'localhost'.
 See also VM_NET_GUEST.
+
+VM_NET_GUEST
+The hostname or ip of the guest os, defaults to $VM_MACHINE_NAME 
 
 VM_SNAPSHOT_SEEDNAME_DEFAULT
 VM_SNAPSHOT_BASENAME_DEFAULT
 VM_SNAPSHOT_BACKINGNAME_DEFAULT
 The last part of the name of the image file used for the purpose if
-there is not the override. Theses are global defaults to be used
+it is not overridden. These are global defaults to be used
 only in the system-wide vmrc. In your local configuration use:
 
 VM_SNAPSHOT_SEEDNAME

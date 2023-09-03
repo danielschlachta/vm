@@ -1,9 +1,17 @@
-LONGOPTS=verbose
-OPTIONS=v
+VM_LONGOPTS=quiet,no-ssh-fail
+VM_OPTIONS=qs
+
+function vm_help()
+{
+    cat <<EOT
+  -q | --quiet            do not display anything
+EOT
+}
 
 . $VM_LIB/options.sh
 
-VERBOSE=0
+QUIET=0
+NOSSH=0
 
 while true; do
     case "$1" in
@@ -11,12 +19,20 @@ while true; do
             shift
             break
             ;;
-        -v|--verbose)
-            VERBOSE=1
+        -q|--quiet)
+            QUIET=1
+            shift
+            ;;
+        -s|--no-ssh-fail)
+            NOSSH=1
+            shift
+            ;;
+        *)
             shift
             ;;
     esac
 done
 
+if [ "$QUIET" = "1" -a "$VERBOSE" = "1" ]; then vm_die Options --quiet and --verbose are mutually exclusive; fi
 
 

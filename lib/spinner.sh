@@ -1,21 +1,26 @@
-#!/bin/sh
 #
 # IMPORTANT! Downloaded from https://github.com/swelljoe/spinner
-#
 # This file contains modifications, DO NOT REPLACE IT WITH THE ORIGINAL.
 #
-SPINNER_COLORNUM=2 # What color? Irrelevent if COLORCYCLE=1.
+
+# Change these to suit your taste
+
+SPINNER_COLORNUM=3 # What color? Irrelevent if COLORCYCLE=1.
 SPINNER_COLORCYCLE=0 # Does the color cycle?
-SPINNER_DONEFILE="stopspinning" # Path/name of file to exit on.
-SPINNER_SYMBOLS="UNI_DOTS5" # Name of the variable containing the symbols.
+SPINNER_SYMBOLS="UNI_PIE" # Name of the variable containing the symbols.
+
+#
+
+SPINNER_RUNNING=0
 SPINNER_CLEAR=1 # Blank the line when done.
 
 # Handle signals
 cleanup () {
-	tput rc
-	tput cnorm
-	return 1
+  tput rc
+  tput cnorm
+  exit 2
 }
+
 # This tries to catch any exit, to reset cursor
 trap cleanup INT QUIT TERM
 
@@ -87,7 +92,7 @@ spinner () {
         if [ ${SPINNER_CLEAR} -eq 1 ]; then
           tput el
         fi
-        rm ${SPINNER_DONEFILE}
+        rm -f ${SPINNER_DONEFILE}
         break 2
       fi
       # This is questionable. sleep with fractional seconds is not

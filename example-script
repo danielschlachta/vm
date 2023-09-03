@@ -1,6 +1,6 @@
 #!/usr/local/bin/vm
 
-vm_echo called with paramters: \'$VM_PARAMS\'
+vm_echo called with parameters: \'$VM_PARAMS\'
 
 echo
 echo 'Name: ' $VM_MACHINE_NAME
