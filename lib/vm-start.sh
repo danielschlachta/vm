@@ -40,7 +40,7 @@ if [ "`echo $STAT|grep susp`" != "" ]; then
 fi
 
 if [ "$NAT" = "0" ]; then
-    ATT=30
+    ATT=$SSH_ATT
 
     while [ $ATT -gt 0 ]; do
         vm_progress Waiting for ssh service to become available \($ATT attempts remaining\)
