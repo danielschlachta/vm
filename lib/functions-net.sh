@@ -42,15 +42,9 @@ function vm_get_suspend_method()
 {
     SCT=`$SSH which systemctl 2> /dev/null`
 
-    if [ "$SCT" = "" ]; then
-        ZZZ=`$SSH which zzz 2> /dev/null`
+    test -z $SCT && exit
 
-        if [ "$ZZZ" != "" ]; then
-            echo $ZZZ
-        fi
-    else
-        echo $SCT suspend
-    fi
+    echo $SCT suspend
 }
 
 function vm_suspend()

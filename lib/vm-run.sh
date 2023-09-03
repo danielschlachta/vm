@@ -1,5 +1,9 @@
 vm_check_var VM_MEM_SIZE
 
+QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
+
+test -z $QPID || vm_die virtual machine is already running
+
 if [ "$VM_QEMU_DISPLAY" = "curses" ]; then vm_check_prog tput; fi
 
 if [ "`echo $VM_QEMU_EXTRA$* | grep daemonize`" != "" ]; then \
@@ -68,7 +72,7 @@ fi
 
 CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $VM_MEM_SIZE \
     -monitor telnet:$VM_NET_LISTEN:$VM_NET_PORT,server,nowait \
-    $NET_IF -hda $HDA -no-shutdown $LOADVM $DISP $VM_VNC $VM_QEMU_EXTRA $*"
+    $NET_IF -hda $HDA -no-shutdown $LOADVM $DISP $VNC $VM_QEMU_EXTRA $*"
 
 if [ "$VERBOSE" = "1" ]; then vm_echo $CMD; fi
 echo $CMD | sh

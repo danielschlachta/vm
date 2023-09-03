@@ -5,6 +5,7 @@ function vm_help()
 {
     cat <<EOT
   -q | --quiet            do not display anything
+  -s | --no-ssh-fail      do not exit with error if ssh is not available
 EOT
 }
 

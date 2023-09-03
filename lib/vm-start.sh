@@ -1,5 +1,9 @@
 . $VM_LIB/functions-net.sh
 
+QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
+
+test -z $QPID || vm_die virtual machine is already running
+
 CMD="vm run"
 
 if [ "$NAT" = "0" ]; then vm_check_root; else CMD="$CMD --nat"; fi

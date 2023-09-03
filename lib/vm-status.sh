@@ -49,5 +49,12 @@ if [ "$H_SSH" != "ok" -a "$NOSSH" = "0" ]; then
     exit 1
 fi
 
+vm_echo_if_verbose Guest ssh: $H_SSH
+
 if [ "$H_SSH" != "ok" ]; then exit 0; fi
 
+H_SUSP=`vm_get_suspend_method`
+
+test -z $H_SUSP && H_SUSP='<not available>'
+
+vm_echo_if_verbose Guest suspend: $H_SUSP

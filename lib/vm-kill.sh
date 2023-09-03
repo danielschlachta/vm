@@ -21,6 +21,7 @@ QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
 
 if [ "$QPID" != "" ]; then
     vm_echo_if_verbose Process id $QPID still running, sending SIGQUIT
-    kill -9 $QPID
+    K=`kill -9 $QPID 2>&1`
+    if [ "$K" != "" ]; then vm_die Error sending signal: $K; fi
 fi
 

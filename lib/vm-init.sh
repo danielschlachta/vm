@@ -12,8 +12,6 @@ vm_check_prog pv
 vm_check_prog qemu-img
 vm_die_if_error
 
-if [ ! -f "$VM_SNAPSHOT_SEED_FILENAME" ]; then vm_die seed file \'$VM_SNAPSHOT_SEED_FILENAME\' not found; fi
-
 if [ -f "$VM_SNAPSHOT_BASE_FILENAME" -a "$OK" = "1"  ]; then CLOBBER_BACKING=yes; fi
 if [ -f "$VM_SNAPSHOT_BASE_FILENAME" -a ! -f "$VM_SNAPSHOT_BACKING_FILENAME"  ]; then CLOBBER_BACKING=yes; fi
 
@@ -28,6 +26,7 @@ if [ "$CLOBBER_BACKING" = "yes" -a "$OB" != "1" ]
 then
     if [ "$OK" != "1" ]; then vm_echo Base file \'$VM_SNAPSHOT_BASE_FILENAME\' already exists; fi
 else
+    if [ ! -f "$VM_SNAPSHOT_SEED_FILENAME" ]; then vm_die seed file \'$VM_SNAPSHOT_SEED_FILENAME\' not found; fi
     vm_echo Checking if base file \'$VM_SNAPSHOT_BASE_FILENAME\' is writable
     CMD="touch $VM_SNAPSHOT_BASE_FILENAME"
     if [ "$VERBOSE" = "1" ]; then vm_echo Running \'$CMD\'; fi

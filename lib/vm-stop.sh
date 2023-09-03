@@ -1,5 +1,7 @@
 . $VM_LIB/functions-net.sh
 
+if [ "$POWEROFF" = "0" -a "`vm_get_suspend_method`" = "" ]; then vm_die suspend requested but not available; fi
+
 vm_progress Retrieving virtual machine status
 H_STAT=`vm_get_status`
 
@@ -20,14 +22,17 @@ else
     vm_suspend
 fi
 
-sleep 2
-
 if [ "$SAVEVM" != "" ]; then
     vm_echo_if_verbose Saving snapshot \'$SAVEVM\'
     vm cmd savevm $SAVEVM
-    vm_echo_if_verbose Syncing filesystem
-    sync
 fi
+
+sleep 5
 
 vm_echo_if_verbose Shutting down
 vm cmd q
+
+if [ "$SAVEVM" != "" ]; then
+    vm_echo_if_verbose Syncing filesystem
+    sync
+fi
