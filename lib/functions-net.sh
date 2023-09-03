@@ -10,7 +10,7 @@ function vm_get_ip()
 
 function vm_get_full_name()
 {
-    FQ=`nslookup $1| awk '/name = / { print $4 }' | sed 's,.$,,'`
+    FQ=`nslookup $1| awk '/name = / { print $4 }' | sed 's,\r$,,'`
 
     test -z $FQ && FQ=''
 
