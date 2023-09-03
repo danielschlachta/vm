@@ -2,10 +2,14 @@
 
 ############## Set this to where you have installed vm ###############
 
-#VM_LIB=/usr/local/vm/lib
-VM_LIB=/home/daniel/Development/Projects/vm/lib
+if [ -z $VM_LIB ]; then VM_LIB=/usr/local/vm/lib; fi
 
 ############## NO CONFIGURABLE PARTS BEYOND THIS POINT ###############
+
+if [ ! -f $VM_LIB/../variables.txt ]; then
+        echo "vm: no installation found in '$VM_LIB'" 1>&2
+        exit 1
+fi
 
 BASENAME=`which basename 2> /dev/null`
 
