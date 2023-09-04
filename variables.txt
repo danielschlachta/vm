@@ -48,11 +48,10 @@ in different ways in different places. Thusly you can have 100
 IDs ranging from 00 to 99 but not anything else.
 
 VM_MACHINE_OWNER
-The name of a user account on the guest OS that you or whatever user the
-scripts that use vm are running as can ssh into without
-supplying a password. Note that this account also has to be setup so that
-the various suspend/poweroff commands can be executed via sudo without
-supplying a password.
+Currently only used for issuing commands via ssh. Note that
+the user account/home directory is selected doing ssh command line
+trickery while the effective user id does not change.
+This is important for non-interactive use e.g. init scripts.
 
 VM_NET_LISTEN
 The address of the interface qemu monitor will bind to.
@@ -69,7 +68,7 @@ Defaults to 'localhost'.
 See also VM_NET_GUEST.
 
 VM_NET_GUEST
-The hostname or ip of the guest os, defaults to $VM_MACHINE_NAME 
+The hostname or ip of the guest os, defaults to $VM_MACHINE_NAME
 
 VM_SNAPSHOT_SEEDNAME_DEFAULT
 VM_SNAPSHOT_BASENAME_DEFAULT

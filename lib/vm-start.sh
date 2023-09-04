@@ -27,7 +27,7 @@ while [ $ATT -gt 0 ]; do
     sleep 2
 done
 
-if [ "$ATT" = "0" ]; then vm_die Virtual machine did not start; fi
+if [ "$ATT" = "0" ]; then vm_echo_if_verbose Emulator is dead; exit 1; fi
 
 sleep 3
 
@@ -45,8 +45,11 @@ if [ "$NAT" = "0" ]; then
     while [ $ATT -gt 0 ]; do
         vm_progress Waiting for ssh service to become available \($ATT attempts remaining\)
 
-        #QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
-        #test -z $QPID && vm_die Emulator has died
+        QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
+        if [ "$QPID" = "" ]; then
+            vm_echo_if_verbose Emulator has died
+            exit 1
+        fi
 
         ATT=$(($ATT - 1))
 
