@@ -51,7 +51,7 @@ function vm_die()
     exit 1
 }
 
-function vm_echo ()
+function vm_echo()
 {
     vm_progress_stop
     echo \[`vm_get_timestamp`\] $*
