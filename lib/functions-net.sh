@@ -27,11 +27,9 @@ function vm_get_status()
     vm cmd info status 2> /dev/null | sed -e 's,VM status: ,,' -e 's,..$,,'
 }
 
-USR=$USER
 
-if [ "$USER" = "root" ]; then USR=$SUDO_USER; fi
-
-SSH="ssh -o User=$USR -o IdentityFile=/home/$USR/.ssh/id_rsa -o ServerAliveInterval=2 -o StrictHostKeyChecking=no -o PasswordAuthentication=no $VM_MACHINE_OWNER@$VM_NET_GUEST"
+OH="`eval echo ~$VM_MACHINE_OWNER`"
+SSH="ssh -o User=$VM_MACHINE_OWNER -o IdentityFile=$OH/.ssh/id_rsa -o ServerAliveInterval=2 -o StrictHostKeyChecking=no -o PasswordAuthentication=no $VM_MACHINE_OWNER@$VM_NET_GUEST"
 
 function vm_check_ssh()
 {

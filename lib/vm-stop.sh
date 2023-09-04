@@ -34,5 +34,5 @@ vm cmd q
 
 if [ "$SAVEVM" != "" ]; then
     vm_echo_if_verbose Syncing filesystem
-    sync
+    sync .
 fi
