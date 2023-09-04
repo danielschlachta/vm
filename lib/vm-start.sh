@@ -7,12 +7,11 @@ test -z $QPID || vm_die virtual machine is already running
 CMD="vm run"
 
 if [ "$NAT" = "0" ]; then vm_check_root; else CMD="$CMD --nat"; fi
-if [ "$VERBOSE" = "1" ]; then CMD="$CMD --verbose"; fi
 if [ "$LOADVM" != "" ]; then CMD="$CMD --loadvm $LOADVM"; fi
 
 vm_echo_if_verbose Starting virtual machine \'$VM_MACHINE_NAME\'
 
-$CMD &
+$CMD > /dev/null 2> /dev/null &
 
 ATT=10
 
