@@ -2,8 +2,7 @@
 
 test "$VM_QEMU_DISPLAY" = "curses" && vm_die can\'t start curses interface in background - use vm run
 
-QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
-test -z $QPID || vm_die virtual machine is already running
+vm_check_running && vm_die virtual machine is already running
 
 CMD="vm run"
 
@@ -45,9 +44,7 @@ if [ "$NAT" = "0" ]; then
     while [ $ATT -gt 0 ]; do
         vm_progress Waiting for ssh service to become available \($ATT attempts remaining\)
 
-        QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
-        if [ "$QPID" = "" ]; then
-            vm_echo_if_verbose Emulator has died
+        vm_check_running || vm_echo_if_verbose Emulator has died
             exit 1
         fi
 

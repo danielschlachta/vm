@@ -3,7 +3,7 @@ VM_ERRCNT=0
 function vm_squeal()
 {
     VM_ERRCNT=$(($VM_ERRCNT + 1))
-    echo "$*" 1>&2
+    echo "vm: $*" 1>&2
 }
 
 function vm_die_if_error()
@@ -11,7 +11,7 @@ function vm_die_if_error()
     if [ $VM_ERRCNT -gt 0 ]
     then
         if [ $VM_ERRCNT -gt 1 ]; then s=s; fi
-        echo exiting after $VM_ERRCNT error$s 1>&2
+        echo vm: exiting after $VM_ERRCNT error$s 1>&2
         exit 1
     fi
 }
@@ -86,9 +86,19 @@ function vm_check_prog()
         if [ -z "$PRG" ]
         then
             PKG=not-yet-known
-            vm_squeal "$1 not found, install it using 'sudo apt install $PKG'"
+            MSG="program '$1' not found"
+            test -x /usr/lib/command-not-found && \
+                MSG="$MSG (`/usr/lib/command-not-found $1 2>&1 | tail -n 1`)"
+            vm_squeal "$MSG"
         else
             test -d /var/lib/apt && echo $1 `dpkg -S $PRG | cut -f1 -d:`
         fi
     fi
+}
+
+function vm_check_running()
+{
+    QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
+    test -z "$QPID" || return 0
+    return 1
 }

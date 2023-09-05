@@ -1,8 +1,6 @@
 vm_check_var VM_MEM_SIZE
 
-QPID=`ps ax|grep 77$VM_MACHINE_ID| awk '/qemu/ { print $1 }'`
-
-test -z $QPID || vm_die virtual machine is already running
+vm_check_running && vm_die virtual machine is already running
 
 if [ "$VM_QEMU_DISPLAY" = "curses" ]; then vm_check_prog tput; fi
 
@@ -66,7 +64,7 @@ then
     nmcli connection up `getid bridge-bridge0` | flt
     nmcli connection up `getid bridge-slave` | flt
 
-    sleep 1
+    sleep 2
 fi
 
 
@@ -75,17 +73,10 @@ CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $VM_MEM_SIZE \
     $NET_IF -hda $HDA -no-shutdown $LOADVM $DISP $VNC $VM_QEMU_EXTRA $*"
 
 if [ "$VERBOSE" = "1" ]; then vm_echo $CMD; fi
-echo $CMD | sh
+$CMD
 
 if [ "$HAVE_BRIDGE" = "" -a "$HAVE_NETMAN" = "yes" ]
 then
     nmcli connection del `getid bridge-slave-enp2s0` | flt
     nmcli connection del `getid bridge-bridge0` | flt
 fi
-
-test "$DISP" = "curses" || exit 0
-
-reset
-tput rc
-tput cnorm
-

@@ -34,6 +34,6 @@ while true; do
     esac
 done
 
-if [ "$QUIET" = "1" -a "$VERBOSE" = "1" ]; then vm_die Options --quiet and --verbose are mutually exclusive; fi
+if [ "$QUIET" = "1" -a "$VERBOSE" = "1" ]; then vm_die options --quiet and --verbose are mutually exclusive; fi
 
 
