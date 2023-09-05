@@ -8,7 +8,6 @@ H_STAT=`vm_get_status`
 if [ -z "$H_STAT" ]; then
     vm_echo_if_verbose Error contacting monitor on $VM_NET_HOST port $VM_NET_PORT
 else
-    vm_echo_if_verbose Machine is $H_STAT
     vm_echo_if_verbose Shutting down
     vm cmd q
 fi

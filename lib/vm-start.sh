@@ -42,11 +42,8 @@ if [ "$NAT" = "0" ]; then
     ATT=$SSH_ATT
 
     while [ $ATT -gt 0 ]; do
-        vm_progress Waiting for ssh service to become available \($ATT attempts remaining\)
-
         vm_check_running || vm_echo_if_verbose Emulator has died
-            exit 1
-        fi
+        vm_progress Waiting for ssh service to become available \($ATT attempts remaining\)
 
         ATT=$(($ATT - 1))
 
@@ -57,7 +54,7 @@ if [ "$NAT" = "0" ]; then
         sleep 2
     done
 
-    if [ "$ATT" = "0" ]; then vm_die Unable to connect to virtual machine via ssh; fi
+    if [ "$ATT" = "0" ]; then vm_echo_if_verbose Unable to connect to virtual machine via ssh; exit 1; fi
 
     vm_echo_if_verbose Virtual machine is ready
 fi
