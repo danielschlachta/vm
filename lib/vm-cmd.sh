@@ -4,12 +4,9 @@ vm_check_var VM_NET_HOST
 vm_check_var VM_NET_PORT
 
 vm_check_prog expect
-vm_check_prog nc
 vm_die_if_error
 
 if [ $# -lt 1 ]; then vm_usage; exit 1; fi
-
-nc -z $VM_NET_HOST $VM_NET_PORT || (echo $PROG: could not connect to $VM_NET_HOST port $VM_NET_PORT; exit 1)
 
 function do_expect()
 {
