@@ -16,7 +16,7 @@ function compress_backing()
     TARGET=$VM_ARCHIVE/$VM_MACHINE_NAME-$VM_SNAPSHOT_BACKINGNAME-$TSTAMP.$VM_FMT
 
     if [ "$COMPRESS" = "1" ]; then
-        if [ "$VERBOSE" = "1" ]; then vm_echo Compressing backing file \'$VM_SNAPSHOT_BACKING_FILENAME\' using $COMPRESSOR; V=-v; fi
+        if [ "$VERBOSE" = "1" ]; then vm_echo Compressing \'$TARGET\' using $COMPRESSOR; V=-v; fi
         $COMPRESSOR -f $V $TARGET;
     fi
 }
