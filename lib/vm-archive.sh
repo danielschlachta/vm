@@ -32,7 +32,7 @@ if [ "$CREATE" = "1" ]; then
     vm_check_running && vm_die virtual machine is running
 
     vm_echo_if_verbose Creating archive directory \'$VM_ARCHIVE\'
-    mkdir -p $VM_ARCHIVE || vm_die creating archive directory \'$VM_ARCHIVE\' failed
+    mkdir -p $VM_ARCHIVE 2> /dev/null || vm_die creating archive directory \'$VM_ARCHIVE\' failed
 
     if [ "$VERBOSE" = "1" ]; then V=-v; else Q=-q; fi
 
