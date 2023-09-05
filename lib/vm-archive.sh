@@ -6,9 +6,19 @@ function save_backing()
     TSTAMP=`date -r $VM_SNAPSHOT_BACKING_FILENAME "+%Y%m%d%H%M%S"`
     TARGET=$VM_ARCHIVE/$VM_MACHINE_NAME-$VM_SNAPSHOT_BACKINGNAME-$TSTAMP.$VM_FMT
 
-    if [ "$VERBOSE" = "1" ]; then vm_echo Securing backing file \'$VM_SNAPSHOT_BACKING_FILENAME\'; V=-v; else Q=-q; fi
+    if [ "$VERBOSE" = "1" ]; then vm_echo Saving backing file \'$VM_SNAPSHOT_BACKING_FILENAME\'; else Q=-q; fi
     pv $Q $VM_SNAPSHOT_BACKING_FILENAME > $TARGET
-    if [ "$COMPRESS" = "1" ]; then $COMPRESSOR -f $V $TARGET; fi
+}
+
+function compress_backing()
+{
+    TSTAMP=`date -r $VM_SNAPSHOT_BACKING_FILENAME "+%Y%m%d%H%M%S"`
+    TARGET=$VM_ARCHIVE/$VM_MACHINE_NAME-$VM_SNAPSHOT_BACKINGNAME-$TSTAMP.$VM_FMT
+
+    if [ "$COMPRESS" = "1" ]; then
+        if [ "$VERBOSE" = "1" ]; then vm_echo Compressing backing file \'$VM_SNAPSHOT_BACKING_FILENAME\' using $COMPRESSOR; V=-v; fi
+        $COMPRESSOR -f $V $TARGET;
+    fi
 }
 
 VM_ARCHIVE=$VM_MACHINE_NAME-`date -r $VM_SNAPSHOT_BASE_FILENAME "+%Y%m%d%H%M%S"`
@@ -40,6 +50,7 @@ if [ "$CREATE" = "1" ]; then
     if [ "$COMPRESS" = "1" ]; then $COMPRESSOR $V $VM_ARCHIVE/$VM_SNAPSHOT_BASE_FILENAME; fi
 
     save_backing
+    compress_backing
 else
     test -d $VM_ARCHIVE || vm_die archive directory \'$VM_ARCHIVE\' not found, use --create
     test -f $VM_SNAPSHOT_BACKING_FILENAME || vm_die backing file \'$VM_SNAPSHOT_BACKING_FILENAME\' not found
@@ -52,10 +63,13 @@ else
     if [ "$VM" != "" ]; then
         if [ "$VERBOSE" = "1" ]; then vm_echo Saving snapshot \'$VM\' ; fi
         vm cmd savevm $VM
+        sleep 5
     fi
 
     save_backing
 
     if [ "$VERBOSE" = "1" ]; then vm_echo re-starting virtual machine; fi
     vm cmd cont
+
+    compress_backing
 fi
