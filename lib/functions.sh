@@ -48,7 +48,7 @@ function vm_die()
 {
     vm_progress_stop
     echo $PROG: $* 1>&2
-    if [ "$VM_ERRLOG" != "" -a -w "$VM_ERRLOG" ]; then echo \[`vm_get_timestamp` $VM_CMD\] $* >> "$VM_ERRLOG"; fi
+    if [ "$VM_ERRLOG" != "" -a -w "$VM_ERRLOG" ]; then echo \[`vm_get_timestamp` $VM_CMD\] Fatal: $* >> "$VM_ERRLOG"; fi
     exit 1
 }
 
@@ -62,7 +62,7 @@ function vm_echo_if_verbose()
 {
     vm_progress_stop
     if [ "$VERBOSE" = "1" ]; then vm_echo $*; fi
-    if [ "$VM_LOG" != "" -a -w "$VM_LOG" ]; then vm_echo $* >> "$VM_LOG"; fi
+    if [ "$VM_LOG" != "" -a -w "$VM_LOG" ]; then echo \[`vm_get_timestamp` $VM_CMD\] $* >> "$VM_LOG"; fi
 }
 
 function vm_check_root() {
