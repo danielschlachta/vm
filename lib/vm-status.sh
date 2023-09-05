@@ -4,7 +4,7 @@ vm_progress Getting ip address for $VM_NET_HOST
 H_IP=`vm_get_ip`
 
 if [ -z "$H_IP" ]; then
-    test $QUIET -eq 1  || vm_echo unknown ip address for host $VM_NET_HOST
+    test $QUIET -eq 1 || echo unknown ip address for host $VM_NET_HOST 1>&2
     exit 1
 fi
 
@@ -12,7 +12,7 @@ vm_progress Getting fully qualified host name for $H_IP
 H_NAME=`vm_get_full_name $H_IP`
 
 if [ -z "$H_NAME" ]; then
-    test $QUIET -eq 1 || vm_echo Unable to determine full name for "$H_IP ($VM_NET_HOST)"
+    test $QUIET -eq 1 || echo Unable to determine full name for "$H_IP ($VM_NET_HOST)" 1>&2
     exit 1
 fi
 
@@ -37,26 +37,31 @@ if [ "$H_STAT" != "running" ]; then
     exit 1
 fi
 
-vm_echo_if_verbose Host address is $H_IP
-vm_echo_if_verbose Host name is $H_NAME
-vm_echo_if_verbose Host ping returns $H_PING
+if [ "$VERBOSE" = "1" ]; then
+    vm_echo Host address is $H_IP
+    vm_echo Host name is $H_NAME
+    vm_echo Host ping returns $H_PING
+fi
 
-vm_progress Checking if ssh is available
+if [ "$NOSSH" = "1" ]; then exit 0; fi
+
+vm_progress Checking if guest ssh is available
 H_SSH=`vm_check_ssh`
 
-if [ "$H_SSH" != "ok" -a "$NOSSH" = "0" ]; then
+if [ "$H_SSH" != "ok" ]; then
     test $QUIET -eq 1 || vm_echo Error contacting ssh service: $H_SSH
     exit 1
-fi
-
-vm_echo_if_verbose Guest \'$VM_NET_GUEST\' ssh service: $H_SSH
-
-if [ "$H_SSH" != "ok" ]; then exit 0; fi
-
-H_SUSP=`vm_get_suspend_method`
-
-if [ "$H_SUSP" != "" ]; then
-    vm_echo_if_verbose Guest suspend: $H_SUSP
 else
-    vm_echo_if_verbose Guest suspend not available
+    vm_echo_if_verbose Guest ssh service is available
 fi
+
+if [ "$VERBOSE" = "1" ]; then
+    H_SUSP=`vm_get_suspend_method`
+
+    if [ "$H_SUSP" != "" ]; then
+        vm_echo Guest suspend is available via $H_SUSP
+    else
+        vm_echo Guest suspend is not available
+    fi
+fi
+

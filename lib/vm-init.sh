@@ -37,7 +37,7 @@ else
     if [ "$VERBOSE" = "1" ]; then vm_echo Running \'$CMD\'; fi
 
     if [ -z $DRYRUN ]; then
-        pv $VM_SNAPSHOT_SEED_FILENAME > $VM_SNAPSHOT_BASE_FILENAME
+        echo "$CMD" | sh
         test $? -gt 0 && vm_die Error copying \'$VM_SNAPSHOT_SEED_FILENAME\' to \'$VM_SNAPSHOT_BASE_FILENAME\'
     else
         vm_echo Testing only, not running command

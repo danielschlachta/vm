@@ -35,6 +35,13 @@ VM_DATEFMT
 The format used for log messages et al. as passed to the 'date' program.
 Leave blank to use the system default.
 
+VM_LOG
+If set, most messages that would be generated using the --verbose switch will be logged
+to this file instead. The --verbose switch can still be used to display them as well.
+
+VM_ERRLOG
+If set, fatal errors will be logged to this file.
+
 VM_USE_SNAPSHOTS
 Set this to 'yes' or use the simple version.
 

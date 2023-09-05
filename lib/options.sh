@@ -19,13 +19,13 @@ eval set -- "$PARSED"
 
 function vm_usage()
 {
-    echo usage: vm $CMD $VM_USAGE 1>&2
+    echo usage: vm $VM_CMD $VM_USAGE 1>&2
     echo -e "\nrecognized options:" 1>&2
     cat 1>&2 <<EOT
   -h | --help             display this text
   -v | --verbose          be chatty, precise meaning depends on command
 EOT
- 
+
     vm_help 1>&2
 }
 

@@ -21,15 +21,6 @@ function vm_get_timestamp()
     if [ "$VM_DATEFMT" = "" ]; then date; else date +"$VM_DATEFMT"; fi
 }
 
-function vm_progress_stop()
-{
-    if [ "$SPINNER_RUNNING" = "1" -a "$SPINNER_DONEFILE" != "" ]; then
-        touch $SPINNER_DONEFILE
-        SPINNER_RUNNING=0
-        sleep 0.3
-    fi
-}
-
 function vm_progress()
 {
     if [ "$VERBOSE" = "1" -a -t 1 ]; then
@@ -44,10 +35,20 @@ function vm_progress()
     fi
 }
 
+function vm_progress_stop()
+{
+    if [ "$SPINNER_RUNNING" = "1" -a "$SPINNER_DONEFILE" != "" ]; then
+        touch $SPINNER_DONEFILE
+        SPINNER_RUNNING=0
+        sleep 0.3
+    fi
+}
+
 function vm_die()
 {
     vm_progress_stop
-    echo -e $PROG: $* 1>&2
+    echo $PROG: $* 1>&2
+    if [ "$VM_ERRLOG" != "" ]; then echo \[`vm_get_timestamp` $VM_CMD\] $* >> "$VM_ERRLOG" 2> /dev/null; fi
     exit 1
 }
 
@@ -61,6 +62,7 @@ function vm_echo_if_verbose()
 {
     vm_progress_stop
     if [ "$VERBOSE" = "1" ]; then vm_echo $*; fi
+    if [ "$VM_LOG" != "" -a -f "$VM_LOG" ]; then vm_echo $* >> "$VM_LOG" 2> /dev/null; fi
 }
 
 function vm_check_root() {
