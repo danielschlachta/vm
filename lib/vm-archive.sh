@@ -1,8 +1,6 @@
 test -z "$VM_USE_SNAPSHOTS" && vm_die snapshots not enabled
 test -f $VM_SNAPSHOT_BASE_FILENAME || vm_die base file \'$VM_SNAPSHOT_BASE_FILENAME\' not found
 
-VM_ARCHIVE=$VM_MACHINE_NAME-`date -r $VM_SNAPSHOT_BASE_FILENAME "+%Y%m%d%H%M%S"`
-
 function save_backing()
 {
     TSTAMP=`date -r $VM_SNAPSHOT_BACKING_FILENAME "+%Y%m%d%H%M%S"`
@@ -13,12 +11,11 @@ function save_backing()
     if [ "$COMPRESS" = "1" ]; then $COMPRESSOR -f $V $TARGET; fi
 }
 
+VM_ARCHIVE=$VM_MACHINE_NAME-`date -r $VM_SNAPSHOT_BASE_FILENAME "+%Y%m%d%H%M%S"`
+
 if [ "$CREATE" = "1" ]; then
     vm_check_prog pv
     vm_die_if_error
-
-    test -d $VM_ARCHIVE && vm_die archive directory \'$VM_ARCHIVE\' already exists, not clobbering it
-    test -f $VM_SNAPSHOT_BASE_FILENAME || vm_die base file \'$VM_SNAPSHOT_BASE_FILENAME\' not found
 
     vm_check_running && vm_die virtual machine is running
 
@@ -32,6 +29,8 @@ if [ "$CREATE" = "1" ]; then
 
     if [ "$VERBOSE" = "1" ]; then vm_echo Committing changes to base; else Q=-q; fi
     qemu-img commit $Q $VM_SNAPSHOT_BACKING_FILENAME || vm_die qemu-img commit failed
+
+    VM_ARCHIVE=$VM_MACHINE_NAME-`date -r $VM_SNAPSHOT_BASE_FILENAME "+%Y%m%d%H%M%S"`
 
     if [ "$VERBOSE" = "1" ]; then vm_echo Creating new backing file; fi
     qemu-img create $Q -f $VM_FMT -b $VM_SNAPSHOT_BASE_FILENAME -F $VM_FMT $VM_SNAPSHOT_BACKING_FILENAME
