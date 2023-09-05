@@ -1,6 +1,8 @@
 VM_LONGOPTS=dry-run,clobber-backing,clobber-base
 VM_OPTIONS=tbk
 
+VM_USAGE=
+
 function vm_help()
 {
     cat <<EOT

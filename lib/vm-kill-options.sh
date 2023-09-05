@@ -16,7 +16,7 @@ while true; do
         --)
             shift
             break
-            ;;
+            ;;    
         -s|--savevm)
             SAVEVM="$2"
             shift 2

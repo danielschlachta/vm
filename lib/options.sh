@@ -17,6 +17,18 @@ fi
 
 eval set -- "$PARSED"
 
+function vm_usage()
+{
+    echo usage: vm $CMD $VM_USAGE 1>&2
+    echo -e "\nrecognized options:" 1>&2
+    cat 1>&2 <<EOT
+  -h | --help             display this text
+  -v | --verbose          be chatty, precise meaning depends on command
+EOT
+ 
+    vm_help 1>&2
+}
+
 VERBOSE=0
 
 for i in $*; do
@@ -25,11 +37,7 @@ for i in $*; do
             VERBOSE=1
             ;;
         -h|--help)
-            cat 1>&2 <<EOT
-  -h | --help             display this text
-  -v | --verbose          be chatty, precise meaning depends on command
-EOT
-            vm_help 1>&2
+            vm_usage
             exit 0
             ;;
     esac

@@ -7,7 +7,7 @@ vm_check_prog expect
 vm_check_prog nc
 vm_die_if_error
 
-if [ $# -lt 1 ]; then vm_die too few arguments; fi
+if [ $# -lt 1 ]; then vm_usage; exit 1; fi
 
 function do_expect()
 {
