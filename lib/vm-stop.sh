@@ -17,13 +17,8 @@ if [ "$NOSUSPEND" = "0" ]; then
 
     if [ "$H_SSH" != "ok" ]; then vm_die Error contacting ssh service: $H_SSH; fi
 
-    if [ "$POWEROFF" = "1" ]; then
-        vm_echo_if_verbose Sending poweroff command
-        vm_poweroff
-    else
-        vm_echo_if_verbose Sending suspend command
-        vm_suspend
-    fi
+    vm_echo_if_verbose Sending suspend command
+    vm_suspend
 fi
 
 if [ "$SAVEVM" != "" ]; then

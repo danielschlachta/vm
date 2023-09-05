@@ -5,8 +5,7 @@ VM_USAGE='<command>'
 
 function vm_help()
 {
-    cat <<EOT
-EOT
+    return
 }
 
 . $VM_LIB/options.sh

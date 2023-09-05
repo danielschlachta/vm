@@ -13,10 +13,7 @@ fi
 
 BASENAME=`which basename 2> /dev/null`
 
-if [ -z $BASENAME ]; then
-    echo "vm: your PATH seems to be set to something not entirely wholesome: '$PATH'" 1>&2
-    exit 1
-fi
+test -z "$BASENAME" && vm_die "your PATH seems to be set to something not entirely wholesome: '$PATH'"
 
 . $VM_LIB/init.sh
 
@@ -27,7 +24,7 @@ if [ ! -f $VM_CONFIG ]; then vm_die configuration file \'$VM_CONFIG\' not presen
 VM_CMD=$1
 shift
 
-KNOWN="start stop kill status cmd run init sh"
+KNOWN="start stop kill status cmd run init archive sh"
 
 if [ -z $VM_CMD ]; then
         for i in $KNOWN; do US="$US | $i"; done
@@ -42,7 +39,7 @@ function export_vars()
 }
 
 case $VM_CMD in
-    start|stop|kill|status|cmd|run|init)
+    start|stop|kill|status|cmd|run|init|archive)
                 . $VM_LIB/vm-$VM_CMD-options.sh
                 . $VM_LIB/vm-$VM_CMD.sh $*
         ;;

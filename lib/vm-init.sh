@@ -2,7 +2,7 @@
 
 vm_check_var VM_MACHINE_NAME
 
-if [ "$VM_USE_SNAPSHOTS" != "yes" ]; then vm_die snapshots not configured; fi
+if [ "$VM_USE_SNAPSHOTS" != "yes" ]; then vm_die snapshots not enabled; fi
 
 vm_check_var VM_SNAPSHOT_SEED_FILENAME
 vm_check_var VM_SNAPSHOT_BASE_FILENAME

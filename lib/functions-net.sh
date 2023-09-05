@@ -52,7 +52,3 @@ function vm_suspend()
     if [ "$SPM" != "" ]; then $SSH sudo -n $SPM > /dev/null 2> /dev/null; fi
 }
 
-function vm_poweroff()
-{
-    $SSH sudo -n poweroff > /dev/null 2> /dev/null
-}
