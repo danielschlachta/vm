@@ -49,8 +49,10 @@ else
     if [ "$VERBOSE" = "1" ]; then vm_echo Stopping virtual machine; fi
     vm cmd stop
 
-    if [ "$VERBOSE" = "1" ]; then vm_echo Saving snapshot \'$VM\' ; fi
-    vm cmd savevm $VM
+    if [ "$VM" != "" ]; then
+        if [ "$VERBOSE" = "1" ]; then vm_echo Saving snapshot \'$VM\' ; fi
+        vm cmd savevm $VM
+    fi
 
     save_backing
 
