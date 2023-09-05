@@ -62,7 +62,7 @@ function vm_echo_if_verbose()
 {
     vm_progress_stop
     if [ "$VERBOSE" = "1" ]; then vm_echo $*; fi
-    if [ "$VM_LOG" != "" -a -f "$VM_LOG" ]; then vm_echo $* >> "$VM_LOG" 2> /dev/null; fi
+    if [ "$VM_LOG" != "" ]; then vm_echo $* >> "$VM_LOG" 2> /dev/null; fi
 }
 
 function vm_check_root() {
