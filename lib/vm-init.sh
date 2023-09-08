@@ -38,7 +38,7 @@ else
 
     if [ -z $DRYRUN ]; then
         echo "$CMD" | sh
-        test $? -gt 0 && vm_die Error copying \'$VM_SNAPSHOT_SEED_FILENAME\' to \'$VM_SNAPSHOT_BASE_FILENAME\'
+        test $? -gt 0 && vm_die pv $VM_SNAPSHOT_SEED_FILENAME returned status $?
     else
         vm_echo Testing only, not running command
     fi

@@ -48,7 +48,10 @@ function vm_die()
 {
     vm_progress_stop
     echo $PROG: $* 1>&2
-    if [ "$VM_ERRLOG" != "" -a -w "$VM_ERRLOG" ]; then echo \[`vm_get_timestamp` $VM_CMD\] Fatal: $* >> "$VM_ERRLOG"; fi
+    if [ "$VM_ERRLOG" != "" -a -w "$VM_ERRLOG" ]; then
+        echo \[`vm_get_timestamp` $VM_CMD\] $* | tee -a "$VM_ERRLOG" > /dev/null 2>&1 || \
+            echo $PROG: could not write to error log file \'$VM_ERRLOG\' 1>&2
+    fi
     exit 1
 }
 
@@ -62,7 +65,10 @@ function vm_echo_if_verbose()
 {
     vm_progress_stop
     if [ "$VERBOSE" = "1" ]; then vm_echo $*; fi
-    if [ "$VM_LOG" != "" -a -w "$VM_LOG" ]; then echo \[`vm_get_timestamp` $VM_CMD\] $* >> "$VM_LOG"; fi
+    if [ "$VM_LOG" != "" -a -w "$VM_LOG" ]; then
+        echo \[`vm_get_timestamp` $VM_CMD\] $* | tee -a "$VM_LOG" > /dev/null 2>&1 || \
+            echo $PROG: could not write to log file \'$VM_LOG\' 1>&2
+    fi
 }
 
 function vm_check_root() {

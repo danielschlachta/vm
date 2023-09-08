@@ -36,6 +36,17 @@ function vm_check_ssh()
     $SSH echo ok 2>&1 | sed 's,ssh: ,,'
 }
 
+function vm_sync()
+{
+    $SSH sync
+}
+
+function vm_poweroff()
+{
+    $SSH "sudo poweroff"
+}
+
+
 function vm_get_suspend_method()
 {
     SCT=`$SSH which systemctl 2> /dev/null`

@@ -11,7 +11,7 @@ if [ -z "$H_STAT" ]; then vm_die Error contacting monitor on $VM_NET_HOST port $
 
 vm_echo_if_verbose Machine is $H_STAT
 
-if [ "$NOSUSPEND" = "0" ]; then
+if [ "$NOSUSPEND" = "0" -a "$POWEROFF"="0" ]; then
     vm_progress Checking if ssh is available
     H_SSH=`vm_check_ssh`
 
@@ -28,10 +28,28 @@ if [ "$SAVEVM" != "" ]; then
     sleep 5
 fi
 
-vm_echo_if_verbose Shutting down
+if [ "$POWEROFF" = "1" ]; then
+    vm_echo_if_verbose Sending poweroff command
+    vm_poweroff
+
+    ATT=120
+
+    while [ $ATT -gt 0 ]; do
+        vm_progress Waiting for virtual machine to shut down \($ATT attempts remaining\)
+        ATT=$(($ATT - 1))
+
+        STAT=`vm_get_status | grep shutdown`
+
+        if [ "$STAT" != "" ]; then break; fi
+
+        sleep 2
+    done
+fi
+
+vm_progress_stop
+
+vm_echo_if_verbose Shutting down emulator
 vm cmd q
 
-if [ "$SAVEVM" != "" ]; then
-    vm_echo_if_verbose Syncing filesystem
-    sync .
-fi
+vm_echo_if_verbose Syncing filesystem
+sync .
