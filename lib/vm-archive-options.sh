@@ -60,6 +60,5 @@ if [ "$COMPRESS" = 1 ]; then
     esac
 fi
 
-if [ "$CREATE" = "1" -a "$SAVEVM" != "" ]; then vm_die --savevm only makes sense in conjunction with --create; fi
-if [ "$CREATE" = "0" -a "$DELVM" != "" ]; then vm_die --delvm does not make sense in conjunction with --create; fi
+if [ "$CREATE" = "1" -a "$SAVEVM" != "" ]; then vm_die --savevm does not make sense in conjunction with --create; fi
 if [ "$COMPRESSOR" = "" -a "$CMPBASE" = "1" ]; then vm_die --compress-base does not make sense without --compress; fi
