@@ -1,4 +1,4 @@
-vm_check_var VM_MEM_SIZE
+vm_check_var VM_MACHINE_MEM
 
 vm_check_running && vm_die virtual machine is already running
 
@@ -68,7 +68,7 @@ then
 fi
 
 
-CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $VM_MEM_SIZE \
+CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $VM_MACHINE_MEM \
     -monitor telnet:$VM_NET_LISTEN:$VM_NET_PORT,server,nowait \
     $NET_IF -hda $HDA -no-shutdown $LOADVM $DISP $VNC $VM_QEMU_EXTRA $*"
 

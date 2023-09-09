@@ -60,6 +60,9 @@ the user account/home directory is selected doing ssh command line
 trickery while the effective user id does not change.
 This is important for non-interactive use e.g. init scripts.
 
+VM_MACHINE_MEM
+The memory size in Megabytes.
+
 VM_NET_LISTEN
 The address of the interface qemu monitor will bind to.
 Defaults to 0.0.0.0 (any).
