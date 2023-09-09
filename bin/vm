@@ -2,24 +2,27 @@
 
 ############## Set this to where you have installed vm ###############
 
-if [ -z $VM_LIB ]; then VM_LIB=/usr/local/vm/lib; fi
+VM_INSTALL_DIR=/usr/local/vm
 
 ############## NO CONFIGURABLE PARTS BEYOND THIS POINT ###############
 
-if [ ! -f $VM_LIB/../variables.txt ]; then
+if [ -z "$VM_LIB" ]; then VM_LIB="$VM_INSTALL_DIR/lib"; fi
+
+VM_VARS="$VM_LIB/../variables.txt"
+
+if [ ! -f "$VM_VARS" ]; then
         echo "vm: no installation found in '$VM_LIB'" 1>&2
         exit 1
 fi
 
 BASENAME=`which basename 2> /dev/null`
 
-test -z "$BASENAME" && vm_die "your PATH seems to be set to something not entirely wholesome: '$PATH'"
-
-. $VM_LIB/init.sh
-
-if [ ! -f $VM_CONFIG ]; then vm_die configuration file \'$VM_CONFIG\' not present in current directory; fi
-
-. $VM_CONFIG
+if [ "$BASENAME" = "" ]; then 
+    echo "vm: either your PATH is set to something not" \
+        "entirely wholesome:" \
+        "'$PATH' or you don't have the coreutils package installed" 2>&1
+    exit 1
+fi
 
 VM_CMD=$1
 shift
@@ -28,13 +31,22 @@ KNOWN="start stop kill status cmd run init archive sh"
 
 if [ -z $VM_CMD ]; then
         for i in $KNOWN; do US="$US | $i"; done
-        vm_die usage: vm \{${US## |} \}
+        echo usage: vm \{${US## |} \} 2>&1
+        exit 1
 fi
 
+if [ "$1" = "-h" -o "$1" = "--help" ]; then
+    . $VM_LIB/functions.sh
+else
+    . $VM_LIB/init.sh
+    . $VM_CONFIG
+fi
+
+if [ ! -f $VM_CONFIG ]; then vm_die configuration file \'$VM_CONFIG\' not present in current directory; fi
 
 function export_vars()
 {
-    `grep ^VM_ $VM_LIB/../variables.txt | \
+    `grep ^VM_ "$VM_VARS" | \
         while read line; do echo export $line; done`
 }
 

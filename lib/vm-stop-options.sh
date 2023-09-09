@@ -1,5 +1,5 @@
 VM_LONGOPTS=savevm:,no-suspend,poweroff
-VM_OPTIONS=sp:r
+VM_OPTIONS=s:pr
 
 function vm_help()
 {

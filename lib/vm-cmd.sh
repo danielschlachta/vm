@@ -4,7 +4,11 @@ vm_check_var VM_NET_HOST
 vm_check_var VM_NET_PORT
 
 vm_check_prog expect
+test "$VERBOSE" = "1" && vm_check_prog nc
+
 vm_die_if_error
+
+if [ "$VERBOSE" = "1" ]; then vm_echo `nc -zv $VM_NET_HOST $VM_NET_PORT 2>&1`; fi
 
 if [ $# -lt 1 ]; then vm_usage; exit 1; fi
 
