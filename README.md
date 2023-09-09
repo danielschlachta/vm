@@ -349,11 +349,11 @@ First, edit the system definition:
     
 Between the line
 
-    (use-service-modules cups desktop networking ssh xorg)
+>    (use-service-modules cups desktop networking ssh xorg)
     
 and
 
-    (operating-system
+>    (operating-system
     
 insert the following:
 
@@ -366,7 +366,7 @@ insert the following:
 
 and after
 
-    (host-name "guix")
+>    (host-name "guix")
 
 insert
 
@@ -374,11 +374,12 @@ insert
 
 then press `ctrl-s` to save the changes and `ctrl-x` to exit the editor.
 
-Now reconfigure the system to reflect the change, but update it first
-because otherwise guix will very likely try to downgrade it!
+Now reconfigure the system to reflect the change and grab a cup of coffee.
 
-    sudo guix pull; sudo guix system reconfigure /etc/config.scm
+    sudo guix package --search-paths -p "/root/.config/guix/current"
+    sudo guix pull; sudo guix package -p
+    sudo guix system reconfigure --allow-downgrades /etc/config.scm
     
-Now grab a cup of coffee.
+
 
 

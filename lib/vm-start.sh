@@ -31,7 +31,7 @@ if [ "$ATT" = "0" ]; then vm_echo_if_verbose Emulator is dead; exit 1; fi
 sleep 3
 
 STAT=`vm_get_status`
-test -z $STAT || vm_echo_if_verbose Machine is $STAT
+test -z "$STAT" || vm_echo_if_verbose Machine is $STAT
 
 if [ "`echo $STAT|grep susp`" != "" ]; then
     vm_echo_if_verbose Issuing wakeup command
