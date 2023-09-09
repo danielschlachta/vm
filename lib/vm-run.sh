@@ -7,14 +7,14 @@ if [ "$VM_QEMU_DISPLAY" = "curses" ]; then vm_check_prog tput; fi
 if [ "`echo $VM_QEMU_EXTRA$* | grep daemonize`" != "" ]; then \
     vm_die -daemonize option is incompatible with vm run, please use vm start instead; fi
 
-if [ "$VM_USE_SNAPSHOTS" = "yes" -a ! -f "$VM_SNAPSHOT_BACKING_FILENAME" -a "$BASE" != "1" ]; then \
+if [ "$VM_USE_SNAPSHOTS" != "no" -a ! -f "$VM_SNAPSHOT_BACKING_FILENAME" -a "$BASE" != "1" ]; then \
     vm_die snapshots configured, but backing file \'$VM_SNAPSHOT_BACKING_FILENAME\' not found, use -b to \
     use the base file instead; fi
 
-if [ "$VM_USE_SNAPSHOTS" = "yes" -a "$BASE" = "1" -a ! -f "$VM_SNAPSHOT_BASE_FILENAME"  ]; then vm_die base \
+if [ "$VM_USE_SNAPSHOTS" != "no" -a "$BASE" = "1" -a ! -f "$VM_SNAPSHOT_BASE_FILENAME"  ]; then vm_die base \
     file \'$VM_SNAPSHOT_BASE_FILENAME\' not found; fi
 
-if [ "$VM_USE_SNAPSHOTS" = "yes" ]
+if [ "$VM_USE_SNAPSHOTS" != "no" ]
 then
     if [ "$BASE" = "1" ]; then HDA=$VM_SNAPSHOT_BASE_FILENAME; else HDA=$VM_SNAPSHOT_BACKING_FILENAME; fi
 else
@@ -40,6 +40,11 @@ function flt() {
 
 if [ "$NAT" != "1" ]
 then
+    vm_check_prog ip
+    vm_check_prog pgrep
+
+    vm_die_if_error
+
     if [ "`ip address show dev br0 2> /dev/null`" != "" ]; then HAVE_BRIDGE=yes; fi
     if [ "`pgrep NetworkManager`" != "" ]; then HAVE_NETMAN=yes; fi
 fi
@@ -58,6 +63,9 @@ fi
 
 if [ "$HAVE_BRIDGE" = "" -a "$HAVE_NETMAN" = "yes" ]
 then
+    vm_check_prog nmcli
+    vm_die_if_error
+
     nmcli connection add type bridge ifname bridge0 stp no | flt
     nmcli connection add type bridge-slave ifname enp2s0 master bridge0 | flt
 

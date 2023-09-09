@@ -1,18 +1,20 @@
-VM_LONGOPTS=savevm:,no-suspend,poweroff
-VM_OPTIONS=s:pr
+VM_LONGOPTS=savevm:,poweroff,reboot,no-suspend
+VM_OPTIONS=s:prn
 
 function vm_help()
 {
        cat <<EOT
-  -s | --savevm           save named snapshot
-  -p | --poweroff         power the machine off
-  -r | --no-suspend       do not suspend the machine
+  -s | --savevm           save the machine state
+  -p | --poweroff         power the machine off, implies --no-suspend
+  -r | --reboot           just reboot the machine, do not suspend or quit
+  -n | --no-suspend       do not suspend the machine (but save the state and quit)
 EOT
 }
 
 . $VM_LIB/options.sh
 
 POWEROFF=0
+RESTART=0
 NOSUSPEND=0
 
 while true; do
@@ -27,9 +29,15 @@ while true; do
             ;;
         -p|--poweroff)
             POWEROFF=1
+            NOSUSPEND=1
             shift
             ;;
-        -r|--no-suspend)
+        -r|--reboot)
+            REBOOT=1
+            NOSUSPEND=1
+            shift      
+            ;;
+        -n|--no-suspend)
             NOSUSPEND=1
             shift
             ;;
@@ -38,4 +46,7 @@ while true; do
             ;;
     esac
 done
+
+if [ "$POWEROFF" = "1" -a "$REBOOT" = "1" ]; then vm_die --poweroff and --reboot are mutually exclusive; fi
+if [ "$SAVEVM" != "" -a "$REBOOT" = "1" ]; then vm_die --restart are mutually exclusive; fi
 

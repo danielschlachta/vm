@@ -43,7 +43,7 @@ VM_ERRLOG
 If set, fatal errors will be logged to this file.
 
 VM_USE_SNAPSHOTS
-Set this to 'yes' or use the simple version.
+Set this to 'no' to use the simple version.
 
 VM_MACHINE_NAME
 The name of the game. It is used to prefix basically everything.
@@ -55,10 +55,14 @@ in different ways in different places. Thusly you can have 100
 IDs ranging from 00 to 99 but not anything else.
 
 VM_MACHINE_OWNER
-Currently only used for issuing commands via ssh. Note that
+The name of the user account used for issuing commands via ssh. Note that
 the user account/home directory is selected doing ssh command line
 trickery while the effective user id does not change.
 This is important for non-interactive use e.g. init scripts.
+
+VM_MACHINE_USER
+The name of the user account on the guest that ssh will try to
+dial into. Defaults to $VM_MACHINE_OWNER.
 
 VM_MACHINE_MEM
 The memory size in Megabytes.

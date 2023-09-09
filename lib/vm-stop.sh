@@ -2,8 +2,6 @@
 
 vm_check_running || vm_die virtual machine not running
 
-if [ "$POWEROFF" = "0" -a "$NOSUSPEND" = "0" -a "`vm_get_suspend_method`" = "" ]; then vm_die suspend requested but not available; fi
-
 vm_progress Retrieving virtual machine status
 H_STAT=`vm_get_status`
 
@@ -11,14 +9,22 @@ if [ -z "$H_STAT" ]; then vm_die Error contacting monitor on $VM_NET_HOST port $
 
 vm_echo_if_verbose Machine is $H_STAT
 
-if [ "$NOSUSPEND" = "0" -a "$POWEROFF"="0" ]; then
+if [ "$NOSUSPEND" = "0" -o "$POWEROFF"="1" -o "$REBOOT"="1" ]; then
     vm_progress Checking if ssh is available
     H_SSH=`vm_check_ssh`
 
     if [ "$H_SSH" != "ok" ]; then vm_die Error contacting ssh service: $H_SSH; fi
+    
+    vm_progress Determining guest control method
+    H_CONTROL=`vm_get_control_method`
 
+    if [ "$H_CONTROL" = "" ]; then vm_die Guest control is not available; fi
+fi
+
+if [ "$NOSUSPEND" = "0" ]; then
     vm_echo_if_verbose Sending suspend command
-    vm_suspend
+    vm_sudo $H_CONTROL suspend
+    RES="`vm_sudo $H_CONTROL reboot`"
 fi
 
 if [ "$SAVEVM" != "" ]; then
@@ -28,9 +34,17 @@ if [ "$SAVEVM" != "" ]; then
     sleep 5
 fi
 
+if [ "$REBOOT" = "1" ]; then
+    vm_echo_if_verbose Sending reboot command
+    RES="`vm_sudo $H_CONTROL reboot`"
+    test -z "$RES" || vm_die $RES
+    exit 0
+fi
+
 if [ "$POWEROFF" = "1" ]; then
     vm_echo_if_verbose Sending poweroff command
-    vm_poweroff
+    RES="`vm_sudo $H_CONTROL poweroff`"
+    test -z "$RES" || vm_die $RES
 
     ATT=120
 
@@ -41,12 +55,8 @@ if [ "$POWEROFF" = "1" ]; then
         STAT=`vm_get_status | grep shutdown`
 
         if [ "$STAT" != "" ]; then break; fi
-
-        sleep 2
     done
 fi
-
-vm_progress_stop
 
 vm_echo_if_verbose Shutting down emulator
 vm cmd q

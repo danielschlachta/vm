@@ -1,6 +1,7 @@
 vm_check_prog nslookup
 vm_check_prog ping
 vm_check_prog ssh
+
 vm_die_if_error
 
 function vm_get_ip()
@@ -29,37 +30,40 @@ function vm_get_status()
 
 
 OH="`eval echo ~$VM_MACHINE_OWNER`"
-SSH="ssh -o User=$VM_MACHINE_OWNER -o IdentityFile=$OH/.ssh/id_rsa -o ServerAliveInterval=2 -o StrictHostKeyChecking=no -o PasswordAuthentication=no $VM_MACHINE_OWNER@$VM_NET_GUEST"
+
+OU=$VM_MACHINE_OWNER
+
+if [ "$VM_MACHINE_USER" != "" ]; then OU=$VM_MACHINE_USER; fi
+
+SSH="ssh -o User=$OU -o IdentityFile=$OH/.ssh/id_rsa -o ServerAliveInterval=2 -o StrictHostKeyChecking=no -o PasswordAuthentication=no $VM_NET_GUEST"
 
 function vm_check_ssh()
 {
     $SSH echo ok 2>&1 | sed 's,ssh: ,,'
 }
 
-function vm_sync()
-{
-    $SSH sync
-}
-
-function vm_poweroff()
-{
-    $SSH "sudo poweroff"
-}
-
-
-function vm_get_suspend_method()
+function vm_get_control_method()
 {
     SCT=`$SSH which systemctl 2> /dev/null`
 
+    test -z $SCT && SCT=`$SSH which loginctl 2> /dev/null`
     test -z $SCT && exit
-
-    echo $SCT suspend
+    
+    echo $SCT
 }
 
-function vm_suspend()
+function vm_ssh()
 {
-    SPM=`vm_get_suspend_method`
+    $SSH $* 2>&1
+}
+    
+function vm_sudo()
+{     
+    vm_ssh sudo -n $*
+}
 
-    if [ "$SPM" != "" ]; then $SSH sudo -n $SPM > /dev/null 2> /dev/null; fi
+function vm_sync()
+{
+    $SSH sync
 }
 

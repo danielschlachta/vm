@@ -38,7 +38,7 @@ if [ "$VM_NET_HOST" = "" ]; then VM_NET_HOST=localhost; fi
 if [ "$VM_NET_PORT" = "" ]; then VM_NET_PORT=77${VM_MACHINE_ID}; fi
 if [ "$VM_NET_GUEST" = "" ]; then VM_NET_GUEST=$VM_MACHINE_NAME; fi
 
-if [ "$VM_USE_SNAPSHOTS" = "yes" ]
+if [ "$VM_USE_SNAPSHOTS" != "no" ]
 then
     if [ "$VM_SNAPSHOT_SEEDNAME" = "" ]; then VM_SNAPSHOT_SEEDNAME=$VM_SNAPSHOT_SEEDNAME_DEFAULT; fi
     if [ "$VM_SNAPSHOT_BASENAME" = "" ]; then VM_SNAPSHOT_BASENAME=$VM_SNAPSHOT_BASENAME_DEFAULT; fi

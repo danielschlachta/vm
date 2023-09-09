@@ -1,4 +1,4 @@
-test -z "$VM_USE_SNAPSHOTS" && vm_die snapshots not enabled
+test "$VM_USE_SNAPSHOTS" = "no" && vm_die snapshots not enabled
 test -f $VM_SNAPSHOT_BASE_FILENAME || vm_die base file \'$VM_SNAPSHOT_BASE_FILENAME\' not found
 
 function save_backing()

@@ -13,4 +13,11 @@ echo 'VM_HOME:        ' $VM_HOME
 echo 'VM_CALLING_DIR: ' $VM_CALLING_DIR
 echo
 
-vm_die This script needs work.
+. $VM_LIB/functions-net.sh
+
+if [ "$VM_PARAMS" = "-u" ]; then
+	vm_ssh uptime
+	echo ' There is work to be done.'
+fi
+
+vm_die This line is never executed when ssh is invoked.

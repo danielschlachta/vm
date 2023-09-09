@@ -56,12 +56,12 @@ else
 fi
 
 if [ "$VERBOSE" = "1" ]; then
-    H_SUSP=`vm_get_suspend_method`
+    H_SUSP=`vm_get_control_method`
 
     if [ "$H_SUSP" != "" ]; then
-        vm_echo Guest suspend is available via $H_SUSP
+        vm_echo Guest control is available via $H_SUSP
     else
-        vm_echo Guest suspend is not available
+        vm_echo Guest control is not available
     fi
 fi
 
