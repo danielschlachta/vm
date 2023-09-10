@@ -51,6 +51,7 @@ fi
 
 vm_check_var VM_CONFIG
 vm_check_var VM_FMT
+vm_check_var VM_SAVE_DELAY
 vm_check_var VM_MACHINE_NAME
 vm_check_var VM_MACHINE_ID
 vm_check_var VM_MACHINE_OWNER

@@ -84,7 +84,7 @@ else
     if [ "$SAVEVM" != "" ]; then
         vm_echo_if_verbose Saving snapshot \'$SAVEVM\'
         vm cmd savevm $SAVEVM
-        sleep 5
+        sleep $VM_SAVE_DELAY
     fi
 
     save_backing

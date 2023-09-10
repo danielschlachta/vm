@@ -84,6 +84,11 @@ See also VM_NET_GUEST.
 VM_NET_GUEST
 The hostname or ip of the guest os, defaults to $VM_MACHINE_NAME
 
+VM_SAVE_DELAY
+Wait this many seconds after issuing the savevm command. 
+This is very important because saving a snapshot can be interrupted by 
+quitting the emulator! The default is set in lib/vmrc.
+
 VM_SNAPSHOT_SEEDNAME_DEFAULT
 VM_SNAPSHOT_BASENAME_DEFAULT
 VM_SNAPSHOT_BACKINGNAME_DEFAULT

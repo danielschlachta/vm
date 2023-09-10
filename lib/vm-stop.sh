@@ -9,12 +9,17 @@ if [ -z "$H_STAT" ]; then vm_die Error contacting monitor on $VM_NET_HOST port $
 
 vm_echo_if_verbose Machine is $H_STAT
 
-if [ "$NOSUSPEND" = "0" -o "$POWEROFF"="1" -o "$REBOOT"="1" ]; then
+H_CHECKSSH=1
+
+if [ "$NOSUSPEND" = "1" ]; then H_CHECKSSH=0; fi
+if [ "$POWEROFF" = "1" -o "$REBOOT" = "1" ]; then H_CHECKSSH=1; fi
+
+if [ "$H_CHECKSSH" = "1" ]; then
     vm_progress Checking if ssh is available
     H_SSH=`vm_check_ssh`
 
     if [ "$H_SSH" != "ok" ]; then vm_die Error contacting ssh service: $H_SSH; fi
-    
+
     vm_progress Determining guest control method
     H_CONTROL=`vm_get_control_method`
 
@@ -29,8 +34,8 @@ fi
 if [ "$SAVEVM" != "" ]; then
     vm_echo_if_verbose Saving snapshot \'$SAVEVM\'
     vm cmd savevm $SAVEVM
-    # Need to give it time to actually save the snapshot!
-    sleep 5
+  
+    sleep $VM_SAVE_DELAY
 fi
 
 if [ "$REBOOT" = "1" ]; then

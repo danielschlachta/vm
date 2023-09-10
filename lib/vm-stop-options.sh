@@ -14,7 +14,7 @@ EOT
 . $VM_LIB/options.sh
 
 POWEROFF=0
-RESTART=0
+REBOOT=0
 NOSUSPEND=0
 
 while true; do

@@ -3,6 +3,7 @@
 
 VM_CONFIG=.vmrc
 VM_FMT=qcow2
+VM_SAVE_DELAY=5
 
 # That means you can kick these out if you don't want to use snapshots 
 

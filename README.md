@@ -381,12 +381,31 @@ Now reconfigure the system to reflect the change and grab a cup of coffee.
 
 Type `vm` to see a complete list, type `vm <command> --help` to see
 a list of supported command line options (except for `vm sh`, see below). 
-It is pretty self-explaining, so some options might not be discussed in the
-following.
+Some options will not be discussed in the following because 
+they are self-explaining.
 
 ### vm start
 
-Rather than 
+Rather than just (try to) run the emulator in the foreground, `vm start` 
+provides a complete startup procedure. It sends qemu to the background
+and then checks whether the emulator and the guest os have
+come up correctly. You can watch the process using the `--verbose` option.
+
+Note that when you interrupt vm with `ctrl-c`, qemu - still being a 
+subprocess - will receive the SIGINT signal as well and terminate.
+
+The command exits when
+
+* the guest is ready to use or
+* something went wrong, either qemu or the guest os did not come up properly,
+or the guest os is frozen.
+
+Like with all vm commands (except for `sh`), the exit status is 0 if everything
+works as expected, 1 otherwise.
+
+You can start directly from a previously saved state, use `--loadvm <name>`
+for this. Other than `vm run`, if the snapshot contains the machine in
+a suspended state, `vm start` will detect this and wake it up.
 
 ## What other configuration options are there?
 
