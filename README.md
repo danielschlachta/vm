@@ -245,7 +245,7 @@ connected alongside your computer, not to it, as if both were plugged in to the
 same router or switch.
 
 If you already have a bridge interface configured - which had better be
-called `br0`, otherwise you will need to modify `lib/vm-run.sh` - vm will detect
+called `br0`, or else you will need to modify `lib/vm-run.sh` - vm will detect
 it and let qemu do all the work, which incidentally happens in a script
 called `/etc/qemu-ifup`. Consult this for more information. 
 
@@ -270,17 +270,15 @@ not appear, you are out of luck. You will almost certainly have to resort
 to creating the above mentioned `br0` interface by hand which is
 beyond the scope of this document - and can vary between distributions.
 
-Otherwise, it is now time to configure the network **within** the emulator. This
+It is now time to configure the network **within** the emulator. This
 is the slightly trickier part because it depends a bit on your environment and,
 of course, the guest os you have installed. 
 
 The good news is that, if your computer gets configured automatically for
 internet access, for instance by a router or wlan hotspot, 
 you are probably already done! The guest will receive the
-same treatment and that's all that is required. Otherwise, if you had to
-enter some settings manually you will have to replicate the same steps in the
-guest. If unsure, ask an expert/your service provider/network admin etc., you
-know the drill.
+same treatment and that's all that is required. If not, manually give it
+an ip address on the same subnet as your computer.
 
 For the sake of this document we will stick to the Guix example and 
 assume that you are using the GNOME desktop. Log in, click somewhere
@@ -300,7 +298,7 @@ On Debian/Ubuntu systems and others that use NetworkManager this information
 can usually be gleaned by clicking on some network related icon in one of the 
 corners of the screen, under "Connection Information". Or you
 can fire up a console and enter `ip address`. Look for the part where it
-says "de:ad:be:ef" - the MAC addresses that vm creates all start with that.
+says `de:ad:be:ef` - the MAC addresses that vm creates all start with that.
 
 Now we return to the terminal on your host that you have been using so far. 
 Create a host alias for guix so that vm can look it up:
@@ -324,7 +322,7 @@ You can now do this:
     ping -c 3 guix
     
  to see whether your guest is reachable. Assuming that it is, the next step
- is to connect to it via ssh.
+ is to connect to it via ssh (you will be prompted for your password twice).
  
     ssh-keyscan guix >> .ssh/known_hosts
     ssh guido@guix mkdir .ssh
@@ -336,7 +334,7 @@ Now if you do:
     
 it should log you in without prompting for a password. Brilliant!
 The only thing that remains to do is grant yourself the right to 
-suspend, power off, and shutdown the guest os, also without being asked for
+suspend, power off, and shutdown the system, also without being asked for
 credentials.
     
 Since we have made the slightly masochistic choice to use Guix for our
@@ -377,9 +375,48 @@ then press `ctrl-s` to save the changes and `ctrl-x` to exit the editor.
 Now reconfigure the system to reflect the change and grab a cup of coffee.
 
     sudo guix package --search-paths -p "/root/.config/guix/current"
-    sudo guix pull; sudo guix package -p
-    sudo guix system reconfigure --allow-downgrades /etc/config.scm
+    sudo sh -c "guix pull; guix package -p; guix system reconfigure --allow-downgrades /etc/config.scm"
     
+## What other commands are there?
 
+Type `vm` to see a complete list, type `vm <command> --help` to see
+a list of supported command line options (except for `vm sh`, see below). 
+It is pretty self-explaining, so some options might not be discussed in the
+following.
 
+### vm start
 
+Rather than 
+
+## What other configuration options are there?
+
+`VM_QEMU_EXTRA` probably deserves a special mention. It is used to pass 
+extra arguments to qemu itself.
+
+For a complete list of environment variables with explanations see 
+`variables.txt` in the main directory.
+Globally active options are stored in `lib/vmrc`, this file has comments too.
+
+### Display options
+
+You can set `VM_QEMU_VNC` to `[host]:<display number>` (this is what 
+qemu understands, vm will just pass it through). So, if you
+set the variable to `:2`, point your favourite vnc viewer to
+`vnc://localhost:5902`.
+
+You can also set `VM_QEMU_DISPLAY` to whatever display option qemu was
+compiled with. In the case of `curses`, there are provisions (especially
+`vm start` will not run) so that you don't end up rendering the 
+very shell unusable that you use vm in.
+
+## I have made some changes to vm that I find useful. What should I do?
+
+Zip it. And send the zip file to
+<daniel.schlachta@gmail.com>. Or if you like to make patches, please
+include the output of `git rev-parse HEAD` in your mail.
+
+## What license is vm published under?
+
+Except as represented in this agreement, all work product by Developer is provided ​“AS IS”. Other than as provided in this agreement, Developer makes no other warranties, express or implied, and hereby disclaims all implied warranties, including any warranty of merchantability and warranty of fitness for a particular purpose.
+
+***You asked.***

@@ -15,8 +15,7 @@ EOT
 . $VM_LIB/options.sh
 
 CREATE=0
-DELVM=0
-NOBASE=0
+CMPBASE=0
 
 while true; do
     case "$1" in

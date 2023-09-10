@@ -2,8 +2,6 @@ vm_check_var VM_MACHINE_MEM
 
 vm_check_running && vm_die virtual machine is already running
 
-if [ "$VM_QEMU_DISPLAY" = "curses" ]; then vm_check_prog tput; fi
-
 if [ "`echo $VM_QEMU_EXTRA$* | grep daemonize`" != "" ]; then \
     vm_die -daemonize option is incompatible with vm run, please use vm start instead; fi
 

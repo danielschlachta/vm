@@ -1,3 +1,5 @@
+. $VM_LIB/functions-net.sh
+
 test "$VM_USE_SNAPSHOTS" = "no" && vm_die snapshots not enabled
 test -f $VM_SNAPSHOT_BASE_FILENAME || vm_die base file \'$VM_SNAPSHOT_BASE_FILENAME\' not found
 

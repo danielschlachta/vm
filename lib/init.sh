@@ -61,6 +61,7 @@ vm_check_prog tail
 vm_check_prog cut
 vm_check_prog awk
 vm_check_prog sed
+vm_check_prog tput
 vm_check_prog getopt
 
 vm_die_if_error
