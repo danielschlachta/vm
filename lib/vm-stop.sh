@@ -23,7 +23,6 @@ fi
 
 if [ "$NOSUSPEND" = "0" ]; then
     vm_echo_if_verbose Sending suspend command
-    vm_sudo $H_CONTROL suspend
     RES="`vm_sudo $H_CONTROL suspend`"
 fi
 

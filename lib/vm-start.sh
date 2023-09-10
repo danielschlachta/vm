@@ -8,7 +8,6 @@ CMD="vm run"
 
 if [ "$NAT" = "0" ]; then vm_check_root; else CMD="$CMD --nat"; fi
 if [ "$LOADVM" != "" ]; then CMD="$CMD --loadvm $LOADVM"; fi
-if [ "$VERBOSE" != "0" ]; then CMD="$CMD --verbose"; fi
 
 vm_echo_if_verbose Starting virtual machine \'$VM_MACHINE_NAME\'
 $CMD > /dev/null 2> /dev/null &
@@ -42,7 +41,11 @@ if [ "$NAT" = "0" ]; then
     ATT=$SSH_ATT
 
     while [ $ATT -gt 0 ]; do
-        vm_check_running || vm_echo_if_verbose Emulator has died
+        if [ ! vm_check_running ]; then
+            echo Emulator has died
+            exit 1
+        fi
+        
         vm_progress Waiting for ssh service to become available \($ATT attempts remaining\)
 
         ATT=$(($ATT - 1))
