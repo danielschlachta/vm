@@ -12,9 +12,12 @@ EOT
 
 . $VM_LIB/options.sh
 
+vm_check_var VM_SSH_ATTEMPTS
+vm_die_if_error
+
 NAT=0
 NOSSH=0
-SSH_ATT=30
+SSH_ATT=$VM_SSH_ATTEMPTS
 
 while true; do
     case "$1" in

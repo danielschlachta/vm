@@ -259,26 +259,28 @@ If it says
 
 fret not. You are almost certainly using NetworkManager 
 (my Ubuntu on which I'm writing this certainly does, so do a lot of other 
-distributions) and vm can instruct it to create the bridging interface on the 
-fly (and delete it when it's done). Try:
+distributions, incluing Guix) and vm can instruct it to create the bridging 
+interface on the fly (and delete it when it's done). Try:
 
     sudo vm run -v
     
-Normally, vm will spit out a few lines talking about added connections and
+Vm should spit out a few lines talking about added connections and
 after qemu has stopped, the same about deleted ones. If your Guix window does 
 not appear, you are out of luck. You will almost certainly have to resort
 to creating the above mentioned `br0` interface by hand which is
-beyond the scope of this document - and can vary between distributions.
+beyond the scope of this document - and the process will vary between 
+distributions.
 
-It is now time to configure the network **within** the emulator. This
-is the slightly trickier part because it depends a bit on your environment and,
+It is now time to configure the network on the guest. This
+is the slightly trickier part because it can depend on your environment and,
 of course, the guest os you have installed. 
 
 The good news is that, if your computer gets configured automatically for
 internet access, for instance by a router or wlan hotspot, 
 you are probably already done! The guest will receive the
 same treatment and that's all that is required. If not, manually give it
-an ip address on the same subnet as your computer.
+an ip address on the same subnet as your computer. If you don't know how
+to do that, ask someone who does.
 
 For the sake of this document we will stick to the Guix example and 
 assume that you are using the GNOME desktop. Log in, click somewhere
@@ -287,7 +289,7 @@ in the middle, then right click somewhere and choose "Settings".
 Before you turn to the Network settings, choose "Power" from the menu on
 the left hand side and set "Automatic Suspend" to "off" - otherwise
 Guix will just freeze after a period of inactivity and vm will
-not be able to do anything with it! 
+not be able to do anything with it (cron jobs won't run either)! 
 
 Now click on "Network" - under "Wired" it should say 
 "Connected - 1000Mb/s". If not you will have to fiddle with the 

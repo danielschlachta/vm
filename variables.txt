@@ -29,15 +29,17 @@ This is passed on to shells opened by vm and contains the original
 working directory vm was in when it was called.
 
 VM_FMT
-The format to use for image files, without the dot.
+The format to use for image files, without the dot. The default has to be set
+in lib/vmrc.
 
 VM_DATEFMT
 The format used for log messages et al. as passed to the 'date' program.
 Leave blank to use the system default.
 
 VM_LOG
-If set, most messages that would be generated using the --verbose switch will be logged
-to this file instead. The --verbose switch can still be used to display them as well.
+If set, most messages that would be generated using the --verbose switch will be 
+logged to this file instead. The --verbose switch can still be used to display
+them as well.
 
 VM_ERRLOG
 If set, fatal errors will be logged to this file.
@@ -87,7 +89,13 @@ The hostname or ip of the guest os, defaults to $VM_MACHINE_NAME
 VM_SAVE_DELAY
 Wait this many seconds after issuing the savevm command. 
 This is very important because saving a snapshot can be interrupted by 
-quitting the emulator! The default is set in lib/vmrc.
+quitting the emulator! The default has to be set in lib/vmrc.
+
+VM_SSH_ATTEMPTS
+The number of times vm tries to contact a machine before giving up.
+The default has to be set in lib/vmrc. This is only used in vm start
+because it has to potentially cover the whole time before the machine
+is booted up and can be overridden with the -t switch.
 
 VM_SNAPSHOT_SEEDNAME_DEFAULT
 VM_SNAPSHOT_BASENAME_DEFAULT
@@ -100,7 +108,7 @@ VM_SNAPSHOT_SEEDNAME
 VM_SNAPSHOT_BASENAME
 VM_SNAPSHOT_BACKINGNAME
 These values, if set, will be used to produce the actual file names
-like so:
+like so (defaults are in lib/vmrc):
 
 VM_SNAPSHOT_SEED_FILENAME
 VM_SNAPSHOT_BASE_FILENAME
