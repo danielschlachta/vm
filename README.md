@@ -418,16 +418,16 @@ system the images are stored on to make sure what you just saved survives a
 somewhat rough system restart. Unless you use other options you must
 specify a name for the snapshot to be saved using `--vm-save`.
 
-Suspending the guest first is practical because this way it expects to be 
-halted while when you resume from a snapshot taken from a machine in the running 
-state you will notice that the system time will be wrong among potentially
-a lot of other problems. Vm will detect whether `systemctl` or `loginctrl`
-are present and call the first one found using `sudo`. When you use
-`vm
+Suspending the virtual machine is practical because this way the guest os 
+already expects to not be running for a while. When you resume from a 
+snapshot taken from a machine in the running state you will notice that the 
+system time will be wrong among potentially a lot of other problems. 
 
-It is your responsibility to make sure that the user you configured in `.vmrc` 
-can use the respective command without getting a password prompt. 
-Vm will not hang if it would get one, but it obviously will not work either.
+Vm will detect whether `systemctl` or `loginctrl` are present and call the 
+first one found using `sudo`; it is your responsibility to make sure that the 
+user you configured in `.vmrc` can use the respective command without getting a 
+password prompt (see **Set up networking** above); vm will not hang when
+you don't do this, but it obviously won't work either.
 
 Please do not try to finagle other systems to simulate the presence of
 `systemctl` or `loginctl` by creating a script that echoes things to 
