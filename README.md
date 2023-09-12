@@ -432,7 +432,7 @@ you don't do this, but it obviously won't work either.
 Please do not try to finagle other systems to simulate the presence of
 `systemctl` or `loginctl` by creating a script that echoes things to 
 the kernel, as often described on the net, or call other programs which
-basically do the same, like `zzz`. You will able to send your guest
+basically do the same, like `zzz`. You will be able to send your guest
 os to sleep alright, but there is **no chance** to wake it up again, or
 at least get either the display or the network to reset which boils down
 to the same; believe me, I've tried. 
