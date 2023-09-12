@@ -1,6 +1,6 @@
 #!/usr/local/bin/vm
 
-vm_echo called with parameters: \'$VM_PARAMS\'
+vm_echo 'called with parameters (try -u):' \'$VM_PARAMS\'
 
 echo
 echo 'Name: ' $VM_MACHINE_NAME
@@ -8,16 +8,15 @@ echo 'ID:   ' $VM_MACHINE_ID
 echo 'Owner:' $VM_MACHINE_OWNER
 echo
 
-echo 'Current dir:    ' `pwd`
-echo 'VM_HOME:        ' $VM_HOME
-echo 'VM_CALLING_DIR: ' $VM_CALLING_DIR
+echo 'Current directory: ' `pwd`
+echo 'VM_HOME:           ' $VM_HOME
+echo 'VM_CALLING_DIR:    ' $VM_CALLING_DIR
 echo
 
-. $VM_LIB/functions-net.sh
-
 if [ "$VM_PARAMS" = "-u" ]; then
+	. $VM_LIB/functions-net.sh
 	vm_ssh uptime
 	echo ' There is work to be done.'
 fi
 
-vm_die This line is never executed when ssh is invoked.
+vm_die This line is never executed when ssh completes successfully!

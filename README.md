@@ -176,8 +176,8 @@ this is indeed what should appear. The command line that vm displays because
 of the `--verbose` switch represents all that it does in this instance,
 construct the command line and run qemu in the foreground. Note
 the use of the `VM_MACHINE_ID` to construct a unique port number to start the vm 
-monitor network service on. For this reason, pressing `ctrl-alt-f2` will
-**not** work as you might expect. You do not, however, need to use telnet or
+monitor network service on. For this reason, pressing `ctrl-alt-f2` won't
+ work as you might expect. You do not, however, need to use telnet or
 netcat to talk to qemu, there being `vm cmd` to do just that.
 
     vm cmd info status -v
@@ -222,7 +222,7 @@ is for; NAT stands for *network address translation*)
 which is fine for accessing the internet and does not require any privileges.
 
 It does not, however, lend itself to offering services on the guest itself,
-specifically you can **not** log into it from the outside,
+specifically you can't log into it from the outside,
 which is exactly what vm needs to do to in order to perform most of its
 higher-level functions.
 
@@ -406,12 +406,117 @@ Like with all vm commands (except for `sh`), the exit status is 0 if everything
 works as expected, 1 otherwise.
 
 You can start directly from a previously saved state, use `--loadvm <name>`
-for this. Other than `vm run`, if the snapshot contains the machine in
-a suspended state, `vm start` will detect this and wake it up.
+for this. Unlike `vm run`, `vm start` will detect if the snapshot contains 
+the machine in a suspended state and wake it up.
+
+### vm stop
+
+The default behaviour of `vm stop` is to suspend the guest os, save
+a snapshot, exit the emulator gracefully (use `vm kill` afterwards
+if you want to make sure that it is really dead), and finally sync the file 
+system the images are stored on to make sure what you just saved survives a
+somewhat rough system restart. Unless you use other options you must
+specify a name for the snapshot to be saved using `--vm-save`.
+
+Suspending the guest first is practical because this way it expects to be 
+halted while when you resume from a snapshot taken from a machine in the running 
+state you will notice that the system time will be wrong among potentially
+a lot of other problems. Vm will detect whether `systemctl` or `loginctrl`
+are present and call the first one found using `sudo`. When you use
+`vm
+
+It is your responsibility to make sure that the user you configured in `.vmrc` 
+can use the respective command without getting a password prompt. 
+Vm will not hang if it would get one, but it obviously will not work either.
+
+Please do not try to finagle other systems to simulate the presence of
+`systemctl` or `loginctl` by creating a script that echoes things to 
+the kernel, as often described on the net, or call other programs which
+basically do the same, like `zzz`. You will able to send your guest
+os to sleep alright, but there is **no chance** to wake it up again, or
+at least get either the display or the network to reset which boils down
+to the same, believe me, I've tried. 
+
+If your system runs `chronyd`, like e.g. Alpine Linux, I have found it viable to 
+use the `--nosuspend` option and after startup, issue 
+`ssh <there> sudo rc-service chronyd restart` to correct the time lapse.
+I've had less success with `ntpd` though (Guix again, but it has `loginctl`, 
+suspending it works fine).
+
+When `vm start` loads the image and wakes the virtual machine up, most systems
+will then proceed to revive the network, breathe air into the display, and
+get the new system time (which qemu will gladly provide). So this way, to not
+have to boot the virtual machine at all but instead have it ready in a matter
+of seconds actually works out of the box. Meaning, if against all expectations
+you end up with a frozen guest, it makes sense to experiment.
+
+If you want to power the machine off instead, for instance for the
+purpose of having an image consistently reflecting all the changes you have
+made in a way that survives crashes, use the `--poweroff` switch. 
+You can also use `--reboot` in which case the machine will not be stopped. 
+This is a bit counterintuitive but it seemed overkill to create a separate 
+command just for this.
+
+Use `vm cmd savevm <snapshot name>` to save the machine state while leaving 
+the machine running. There is also `loadvm`, `delvm` and `info snapshots`.
+
+### vm status
+
+This causes vm to water your plants and feed your fish.
+
+### vm archive
+
+This provides a simple yet effective way of backing up your virtual machine.
+If you issue `vm archive --create` it will
+
+* merge the content - including memory snapshots - of the backing file into the 
+base file, a process known as *committing*, 
+* overwrite the old base file with a fresh, empty one,
+* create a directory named `<machine name>-<timestamp>` which reflects
+the modification date of the base file, thereby providing some sort of a
+ versioning mechanism,
+* and copy base and backing files to that directory.
+
+For this to not lead to inconsistencies, the emulator must not be running;
+vm will refuse to touch the base file if it is. Vm can compress both files, 
+but by default it will not compress the base because that might be
+a lenthy process. Plus, if you keep it in an uncompressed state you can
+still run the archived machine just by copying the `.vmrc` from the parent
+directory! 
+
+After that you can call `vm archive` without parameters to quickly update
+the archive by only copying the current version of the backing file. Vm 
+expects the machine to be running for this purpose. Although not strictly
+necessary, this way it can flush the guest's caches to disk, 
+save a memory snapshot before copying the file, and it will also briefly
+stop the emulator while it does that. Afterwards, it can delete the
+no longer needed snapshot you created with `vm stop` from the archived version
+and optionally compress it.
+
+### vm sh
+
+This opens a subshell of the one vm is called from. It also loads 
+the basic functions and exports all the variables mentioned in `variables.txt`
+before doing so.
+
+When called from the command line it will drop you in an interactive shell (try
+
+    set | grep ^VM_
+
+to see all the variables that vm is using). Note that when called like
+this, `vm sh` will simply eat any other options you may have provided, including
+`--help`.
+
+You can also use it as a shell replacement in your scripts - ideal for 
+extending vm's functionality and further automate related tasks. In this case 
+the rest of the command line will be captured in the
+environment variable `VM_PARAMS`.
+
+See the `example-script` in the main directory for, well, an example.
 
 ## What other configuration options are there?
 
-`VM_QEMU_EXTRA` probably deserves a special mention. It is used to pass 
+`VM_QEMU_EXTRA` probably deserves to be mentioned. It can be used to pass 
 extra arguments to qemu itself.
 
 For a complete list of environment variables with explanations see 
@@ -425,15 +530,15 @@ qemu understands, vm will just pass it through). So, if you
 set the variable to `:2`, point your favourite vnc viewer to
 `vnc://localhost:5902`.
 
-You can also set `VM_QEMU_DISPLAY` to whatever display option qemu was
+You can also set `VM_QEMU_DISPLAY` to one of whichever display options qemu was
 compiled with. In the case of `curses`, there are provisions (especially
 `vm start` will not run) so that you don't end up rendering the 
-very shell unusable that you use vm in.
+very shell unusable that you use vm in - or the emulator for that matter.
 
 ## I have made some changes to vm that I find useful. What should I do?
 
-Zip it. And send the zip file to
-<daniel.schlachta@gmail.com>. Or if you like to make patches, please
+Zip it. And send the zip file to <daniel.schlachta@hotmail.com>. 
+Or if you like to make tarballs and patches, please
 include the output of `git rev-parse HEAD` in your mail.
 
 ## What license is vm published under?
