@@ -65,7 +65,7 @@ are already done since that is the default. Otherwise you can either
 edit the default path in `bin/vm` or set the variable `VM_LIB` to 
 `<installdir>/lib`, possibly in `/etc/environment`. 
 
-In other words, calling it like so: 
+In other words, calling it like this: 
 `VM_LIB=/home/me/progs/vm/lib /home/me/progs/vm/bin/vm` will do just fine.
 
 ## How do I set up a virtual machine for use with vm?
@@ -402,7 +402,7 @@ The command exits when
 * something went wrong, either qemu or the guest os did not come up properly,
 or the guest os is frozen.
 
-Like with all vm commands (except for `sh`), the exit status is 0 if everything
+As with all vm commands (except for `sh`), the exit status is 0 if everything
 works as expected, 1 otherwise.
 
 You can start directly from a previously saved state, use `--loadvm <name>`
@@ -435,19 +435,18 @@ the kernel, as often described on the net, or call other programs which
 basically do the same, like `zzz`. You will able to send your guest
 os to sleep alright, but there is **no chance** to wake it up again, or
 at least get either the display or the network to reset which boils down
-to the same, believe me, I've tried. 
+to the same; believe me, I've tried. 
 
 If your system runs `chronyd`, like e.g. Alpine Linux, I have found it viable to 
-use the `--nosuspend` option and after startup, issue 
+use the `--nosuspend` option, and after startup, issue 
 `ssh <there> sudo rc-service chronyd restart` to correct the time lapse.
 I've had less success with `ntpd` though (Guix again, but it has `loginctl`, 
 suspending it works fine).
 
-When `vm start` loads the image and wakes the virtual machine up, most systems
-will then proceed to revive the network, breathe air into the display, and
-get the new system time (which qemu will gladly provide). So this way, to not
-have to boot the virtual machine at all but instead have it ready in a matter
-of seconds actually works out of the box. Meaning, if against all expectations
+When `vm start` loads the image and wakes up the virtual machine, most systems
+will then proceed to re-initialize several subsystems like display and network. 
+So this way, to not have to boot the virtual machine at all but instead have it 
+ready in a matter of seconds actually works out of the box. Meaning, if against all expectations
 you end up with a frozen guest, it makes sense to experiment.
 
 If you want to power the machine off instead, for instance for the
@@ -480,9 +479,9 @@ the modification date of the base file, thereby providing some sort of a
 For this to not lead to inconsistencies, the emulator must not be running;
 vm will refuse to touch the base file if it is. Vm can compress both files, 
 but by default it will not compress the base because that might be
-a lenthy process. Plus, if you keep it in an uncompressed state you can
+a lengthy process. Plus, if you keep it in an uncompressed state you can
 still run the archived machine just by copying the `.vmrc` from the parent
-directory! 
+directory.
 
 After that you can call `vm archive` without parameters to quickly update
 the archive by only copying the current version of the backing file. Vm 
