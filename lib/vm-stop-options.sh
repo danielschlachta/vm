@@ -48,6 +48,6 @@ while true; do
 done
 
 if [ "$POWEROFF" = "1" -a "$REBOOT" = "1" ]; then vm_die --poweroff and --reboot are mutually exclusive; fi
-if [ "$SAVEVM" = ""  -a "$NOSUSPEND" = "1" ]; then vm_die it does not make much sense to suspend the machine and not save an image; fi
+if [ "$SAVEVM" = ""  -a "$NOSUSPEND" = "0" ]; then vm_die it does not make much sense to suspend the machine and not save an image; fi
 if [ "$SAVEVM" != "" -a "$REBOOT" = "1" ]; then vm_echo it does not make much sense to save the state before rebooting, consider -n; fi
 
