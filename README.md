@@ -80,16 +80,16 @@ of the guest operating system on it. Vm does not handle this because
 it is needed only once, the process can vary, and your favourite distro 
 will probably provide instructions for it anyway. 
 
-For the purpose of this example, we will use Guix as our guest of choice. First, 
-create a directory where your Guix installation will live. We will simply 
-call it`guix`:
+For the purpose of this example, we will use Guix as our guest of choice. 
+First, create a directory where your Guix installation will live. We will 
+simply call it`guix`:
 
     mkdir guix
     cd guix
 
 Now download the GNU Guix System .iso file (*not* the ready-made QEMU image)
-from the [Guix download page](https://guix.gnu.org/en/download/), then follow the
-instructions found
+from the [Guix download page](https://guix.gnu.org/en/download/), then follow 
+the instructions found
 [here](https://guix.gnu.org/manual/en/html_node/Installing-Guix-in-a-VM.html).
 
 **Important:** Please check the box next to 'OpenSSH secure shell daemon (sshd)' 
@@ -542,6 +542,7 @@ include the output of `git rev-parse HEAD` in your mail.
 
 ## What license is vm published under?
 
-Except as represented in this agreement, all work product by Developer is provided ​“AS IS”. Other than as provided in this agreement, Developer makes no other warranties, express or implied, and hereby disclaims all implied warranties, including any warranty of merchantability and warranty of fitness for a particular purpose.
+This code is basically in the public domain. See the `LICENSE` file or
+go to [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
 
-***You asked.***
+
