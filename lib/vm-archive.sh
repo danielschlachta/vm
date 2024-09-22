@@ -37,7 +37,7 @@ if [ "$CREATE" = "1" ]; then
     vm_check_prog pv
     vm_die_if_error
 
-    vm_check_running && vm_die virtual machine is running
+    vm_check_running && vm_die emulator machine is running
 
     if [ "$VERBOSE" = "1" ]; then V=-v; else Q=-q; fi
 

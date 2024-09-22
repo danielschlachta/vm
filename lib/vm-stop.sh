@@ -23,7 +23,11 @@ if [ "$H_CHECKSSH" = "1" ]; then
     vm_progress Determining guest control method
     H_CONTROL=`vm_get_control_method`
 
-    if [ "$H_CONTROL" = "" ]; then vm_die Guest control is not available; fi
+    if [ "$H_CONTROL" = "" ]; then 
+	if [ "$NOSUSPEND" = "0" ]; then
+		vm_die Guest control is not available
+	fi
+    fi
 fi
 
 if [ "$NOSUSPEND" = "0" ]; then

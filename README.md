@@ -65,7 +65,7 @@ are already done since that is the default. Otherwise you can either
 edit the default path in `bin/vm` or set the variable `VM_LIB` to 
 `<installdir>/lib`, possibly in `/etc/environment`. 
 
-In other words, calling it like this: 
+In other words, calling it like so: 
 `VM_LIB=/home/me/progs/vm/lib /home/me/progs/vm/bin/vm` will do just fine.
 
 ## How do I set up a virtual machine for use with vm?
@@ -80,16 +80,16 @@ of the guest operating system on it. Vm does not handle this because
 it is needed only once, the process can vary, and your favourite distro 
 will probably provide instructions for it anyway. 
 
-For the purpose of this example, we will use Guix as our guest of choice. 
-First, create a directory where your Guix installation will live. We will 
-simply call it`guix`:
+For the purpose of this example, we will use Guix as our guest of choice. First, 
+create a directory where your Guix installation will live. We will simply 
+call it`guix`:
 
     mkdir guix
     cd guix
 
 Now download the GNU Guix System .iso file (*not* the ready-made QEMU image)
-from the [Guix download page](https://guix.gnu.org/en/download/), then follow 
-the instructions found
+from the [Guix download page](https://guix.gnu.org/en/download/), then follow the
+instructions found
 [here](https://guix.gnu.org/manual/en/html_node/Installing-Guix-in-a-VM.html).
 
 **Important:** Please check the box next to 'OpenSSH secure shell daemon (sshd)' 
@@ -402,7 +402,7 @@ The command exits when
 * something went wrong, either qemu or the guest os did not come up properly,
 or the guest os is frozen.
 
-As with all vm commands (except for `sh`), the exit status is 0 if everything
+Like with all vm commands (except for `sh`), the exit status is 0 if everything
 works as expected, 1 otherwise.
 
 You can start directly from a previously saved state, use `--loadvm <name>`
@@ -418,35 +418,36 @@ system the images are stored on to make sure what you just saved survives a
 somewhat rough system restart. Unless you use other options you must
 specify a name for the snapshot to be saved using `--vm-save`.
 
-Suspending the virtual machine is practical because this way the guest os 
-already expects to not be running for a while. When you resume from a 
-snapshot taken from a machine in the running state you will notice that the 
-system time will be wrong among potentially a lot of other problems. 
+Suspending the guest first is practical because this way it expects to be 
+halted while when you resume from a snapshot taken from a machine in the running 
+state you will notice that the system time will be wrong among potentially
+a lot of other problems. Vm will detect whether `systemctl` or `loginctrl`
+are present and call the first one found using `sudo`. When you use
+`vm
 
-Vm will detect whether `systemctl` or `loginctrl` are present and call the 
-first one found using `sudo`; it is your responsibility to make sure that the 
-user you configured in `.vmrc` can use the respective command without getting a 
-password prompt (see **Set up networking** above); vm will not hang when
-you don't do this, but it obviously won't work either.
+It is your responsibility to make sure that the user you configured in `.vmrc` 
+can use the respective command without getting a password prompt. 
+Vm will not hang if it would get one, but it obviously will not work either.
 
 Please do not try to finagle other systems to simulate the presence of
 `systemctl` or `loginctl` by creating a script that echoes things to 
 the kernel, as often described on the net, or call other programs which
-basically do the same, like `zzz`. You will be able to send your guest
+basically do the same, like `zzz`. You will able to send your guest
 os to sleep alright, but there is **no chance** to wake it up again, or
 at least get either the display or the network to reset which boils down
-to the same; believe me, I've tried. 
+to the same, believe me, I've tried. 
 
 If your system runs `chronyd`, like e.g. Alpine Linux, I have found it viable to 
-use the `--nosuspend` option, and after startup, issue 
+use the `--nosuspend` option and after startup, issue 
 `ssh <there> sudo rc-service chronyd restart` to correct the time lapse.
 I've had less success with `ntpd` though (Guix again, but it has `loginctl`, 
 suspending it works fine).
 
-When `vm start` loads the image and wakes up the virtual machine, most systems
-will then proceed to re-initialize several subsystems like display and network. 
-So this way, to not have to boot the virtual machine at all but instead have it 
-ready in a matter of seconds actually works out of the box. Meaning, if against all expectations
+When `vm start` loads the image and wakes the virtual machine up, most systems
+will then proceed to revive the network, breathe air into the display, and
+get the new system time (which qemu will gladly provide). So this way, to not
+have to boot the virtual machine at all but instead have it ready in a matter
+of seconds actually works out of the box. Meaning, if against all expectations
 you end up with a frozen guest, it makes sense to experiment.
 
 If you want to power the machine off instead, for instance for the
@@ -479,9 +480,9 @@ the modification date of the base file, thereby providing some sort of a
 For this to not lead to inconsistencies, the emulator must not be running;
 vm will refuse to touch the base file if it is. Vm can compress both files, 
 but by default it will not compress the base because that might be
-a lengthy process. Plus, if you keep it in an uncompressed state you can
+a lenthy process. Plus, if you keep it in an uncompressed state you can
 still run the archived machine just by copying the `.vmrc` from the parent
-directory.
+directory! 
 
 After that you can call `vm archive` without parameters to quickly update
 the archive by only copying the current version of the backing file. Vm 
@@ -544,5 +545,3 @@ include the output of `git rev-parse HEAD` in your mail.
 
 This code is basically in the public domain. See the `LICENSE` file or
 go to [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
-
-

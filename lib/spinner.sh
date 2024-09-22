@@ -7,7 +7,8 @@
 
 SPINNER_COLORNUM=3 # What color? Irrelevent if COLORCYCLE=1.
 SPINNER_COLORCYCLE=0 # Does the color cycle?
-SPINNER_SYMBOLS="UNI_PIE" # Name of the variable containing the symbols.
+#SPINNER_SYMBOLS="UNI_PIE" # Name of the variable containing the symbols.
+SPINNER_SYMBOLS="ASCII_PROPELLER"
 
 #
 

@@ -1,6 +1,12 @@
 . $VM_LIB/functions-net.sh
 
-test "$VM_QEMU_DISPLAY" = "curses" && vm_die can\'t start curses interface in background - use vm run
+if [ "$ENCAPSULATE" == "1" ]
+then 
+	vm_check_prog screen
+	vm_die_if_error
+fi
+
+test "$VM_QEMU_DISPLAY" = "curses" -a "$ENCAPSULATE" = "0" && vm_die can\'t start curses interface in background - use --encapsulate or vm run
 
 vm_check_running && vm_die virtual machine is already running
 
@@ -10,7 +16,12 @@ if [ "$NAT" = "0" ]; then vm_check_root; else CMD="$CMD --nat"; fi
 if [ "$LOADVM" != "" ]; then CMD="$CMD --loadvm $LOADVM"; fi
 
 vm_echo_if_verbose Starting virtual machine \'$VM_MACHINE_NAME\'
-$CMD > /dev/null 2> /dev/null &
+if [ "$ENCAPSULATE" == "1" ]
+then
+	screen -md $CMD
+else
+        $CMD > /dev/null 2> /dev/null &
+fi
 
 ATT=10
 
