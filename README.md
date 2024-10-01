@@ -245,31 +245,45 @@ connected alongside your computer, not to it, as if both were plugged in to the
 same router or switch.
 
 If you already have a bridge interface configured - which had better be
-called `br0`, or else you will need to modify `lib/vm-run.sh` - vm will detect
+called `bridge0`, or else you will need to modify `lib/vm-run.sh` - vm will detect
 it and let qemu do all the work, which incidentally happens in a script
 called `/etc/qemu-ifup`. Consult this for more information. 
 
 If unsure, enter:
 
-    ip address show dev br0
+    ip address show dev bridge0
 
 If it says
 
->Device "br0" does not exist.
+>Device "bridge0" does not exist.
 
 fret not. You are almost certainly using NetworkManager 
 (my Ubuntu on which I'm writing this certainly does, so do a lot of other 
 distributions, incluing Guix) and vm can instruct it to create the bridging 
 interface on the fly (and delete it when it's done). Try:
 
-    sudo vm run -v
+    sudo vm run -c -v
     
 Vm should spit out a few lines talking about added connections and
-after qemu has stopped, the same about deleted ones. If your Guix window does 
+after qemu has stopped, the same about deleted ones. 
+
+If your Guix window does 
 not appear, you are out of luck. You will almost certainly have to resort
-to creating the above mentioned `br0` interface by hand which is
+to creating the above mentioned `bridge0` interface by hand which is
 beyond the scope of this document - and the process will vary between 
 distributions.
+
+**CAVEAT:** The bridge interface has a new hardware address which is different
+from your other network interface, thusly it will almost certainly get a 
+different IP address when activated so if things don't work while 
+vm is running, you have configured some non-standard stuff that can't be
+copied automatically.
+
+If everything works as expected you will want to keep everything
+for later use with `vm start`- just kill the script before it 
+terminates, e.g. by hitting Ctrl-C, thereby keeping it from deleting the
+newly created bridge.
+
 
 It is now time to configure the network on the guest. This
 is the slightly trickier part because it can depend on your environment and,

@@ -50,9 +50,13 @@ then
         then
             vm_check_prog nmcli
             vm_die_if_error
+            
+            ETH=`ip address | awk '/^2:/ { print $2 }' | cut -d: -f1`
+            
+            if [ "$ETH" = "" ]; then vm_die could not find ethernet interface; fi
 
             nmcli connection add type bridge ifname bridge0 stp no | flt
-            nmcli connection add type bridge-slave ifname eth0 master bridge0 | flt
+            nmcli connection add type bridge-slave ifname $ETH master bridge0 | flt
 
             nmcli connection up `getid bridge-bridge0` | flt
             #nmcli connection up `getid bridge-slave` | flt
