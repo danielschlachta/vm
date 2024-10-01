@@ -36,18 +36,45 @@ function flt() {
     fi
 }
 
+if [ "`pgrep NetworkManager`" != "" ]; then HAVE_NETMAN=yes; fi
+
+if [ "`ip address show dev bridge0 2> /dev/null`" != "" ]; then HAVE_BRIDGE=yes; fi
+
+if [ "$BRIDGE" = "1" ]
+then
+    if [ "$HAVE_BRIDGE" = "yes" ] 
+    then
+       vm_die device bridge0 already exists
+    else
+        if [ "$HAVE_NETMAN" = "yes" ]
+        then
+            vm_check_prog nmcli
+            vm_die_if_error
+
+            nmcli connection add type bridge ifname bridge0 stp no | flt
+            nmcli connection add type bridge-slave ifname eth0 master bridge0 | flt
+
+            nmcli connection up `getid bridge-bridge0` | flt
+            #nmcli connection up `getid bridge-slave` | flt
+
+            sleep 2
+        else
+            vm_die bridge creation requested but nmcli not found
+        fi
+    fi
+fi
+
+if [ "`ip address show dev bridge0 2> /dev/null`" != "" ]; then HAVE_BRIDGE=yes; fi
+
 if [ "$NAT" != "1" ]
 then
     vm_check_prog ip
     vm_check_prog pgrep
 
     vm_die_if_error
-
-    if [ "`ip address show dev br0 2> /dev/null`" != "" ]; then HAVE_BRIDGE=yes; fi
-    if [ "`pgrep NetworkManager`" != "" ]; then HAVE_NETMAN=yes; fi
 fi
 
-if [ "$HAVE_BRIDGE" = "" -a "$HAVE_NETMAN" = "" -a "$NAT" != "1" ]; then vm_die bridging interface requested but not found; fi
+if [ "$HAVE_BRIDGE" = "" -a "$NAT" != "1" ]; then vm_die no bridge interface available; fi
 
 
 if [ "$NAT" = "1" ]
@@ -58,22 +85,6 @@ else
     NET_IF="-device e1000,netdev=net0,mac=DE:AD:BE:EF:${VM_MACHINE_ID}:11 -netdev tap,id=net0"
 fi
 
-
-if [ "$HAVE_BRIDGE" = "" -a "$HAVE_NETMAN" = "yes" ]
-then
-    vm_check_prog nmcli
-    vm_die_if_error
-
-    nmcli connection add type bridge ifname bridge0 stp no | flt
-    nmcli connection add type bridge-slave ifname enp2s0 master bridge0 | flt
-
-    nmcli connection up `getid bridge-bridge0` | flt
-    nmcli connection up `getid bridge-slave` | flt
-
-    sleep 2
-fi
-
-
 CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $VM_MACHINE_MEM \
     -monitor telnet:$VM_NET_LISTEN:$VM_NET_PORT,server,nowait \
     $NET_IF -hda $HDA -no-shutdown $LOADVM $DISP $VNC $VM_QEMU_EXTRA $*"
@@ -81,7 +92,7 @@ CMD="qemu-system-x86_64 -enable-kvm -cpu host -m $VM_MACHINE_MEM \
 if [ "$VERBOSE" = "1" ]; then vm_echo $CMD; fi
 $CMD
 
-if [ "$HAVE_BRIDGE" = "" -a "$HAVE_NETMAN" = "yes" ]
+if [ "$BRIDGE" = "1" -a "$HAVE_BRIDGE" = "yes" ]
 then
     nmcli connection del `getid bridge-slave-enp2s0` | flt
     nmcli connection del `getid bridge-bridge0` | flt

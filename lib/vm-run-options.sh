@@ -1,12 +1,13 @@
-VM_LONGOPTS=nat,base-only,loadvm:
-VM_OPTIONS=nbl:
+VM_LONGOPTS=bridge,nat,base-only,loadvm:
+VM_OPTIONS=cnbl:
 
 function vm_help()
 {
     cat <<EOT
-  -n | --nat              do not attempt to create a bridge interface, use builtin nat instead
-  -b | --base-only        when snapshots are enabled, do not use any backing file
-  -l | --loadvm           load named snapshot
+  -c | --bridge           try to create a bridge interface using mncli
+  -n | --nat              use builtin nat
+  -b | --base-only        do not use backing with snapshot files
+  -l | --loadvm           load named memory snapshot
 EOT
 }
 
@@ -14,6 +15,7 @@ EOT
 
 NAT=0
 BASE=0
+BRIDGE=0
 LOADVM=''
 
 while true; do
@@ -21,6 +23,10 @@ while true; do
         --)
             shift
             break
+            ;;
+        -c|--bridge)
+            BRIDGE=1
+            shift
             ;;
         -n|--nat)
             NAT=1
@@ -40,5 +46,4 @@ while true; do
     esac
 done
 
-
-
+if [ "$BRIDGE" = "1" -a "$NAT" = "1" ]; then vm_die options --bridge and --nat are mutually exclusive; fi
